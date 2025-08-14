@@ -5,30 +5,32 @@ import type { Auth } from 'firebase-admin/auth';
 import type { Firestore } from 'firebase-admin/firestore';
 import type { Job } from './types';
 
-// This is a singleton pattern to ensure we only initialize Firebase Admin once.
 let app: App;
 let auth: Auth;
 let db: Firestore;
 
 if (!admin.apps.length) {
-    const serviceAccount = process.env.FIREBASE_PRIVATE_KEY
-    ? {
+    const serviceAccount = {
         projectId: process.env.FIREBASE_PROJECT_ID,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
       }
-    : undefined;
 
+  try {
     app = admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount!),
+      credential: admin.credential.cert(serviceAccount),
       projectId: 'global-talent-bridge',
     });
+  } catch (error: any) {
+    console.error('Firebase Admin SDK initialization error', error.stack);
+  }
+
 } else {
     app = admin.app();
 }
 
-auth = app.auth();
-db = app.firestore();
+auth = admin.auth();
+db = admin.firestore();
 
 
 export { app, auth, db };
