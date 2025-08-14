@@ -1,26 +1,23 @@
 
-import * as admin from 'firebase-admin';
+import admin from 'firebase-admin';
 import type { Job } from './types';
 
 // This is a singleton pattern to ensure we only initialize Firebase Admin once.
-// This is crucial for serverless environments like Vercel or Firebase Functions.
 if (!admin.apps.length) {
-  const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
-  if (!serviceAccountString) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY;
+  if (!privateKey) {
+    throw new Error('FIREBASE_PRIVATE_KEY environment variable is not set.');
   }
-  try {
-    const serviceAccount = JSON.parse(serviceAccountString);
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-      projectId: 'global-talent-bridge',
-    });
-  } catch (e: any) {
-    console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT or initialize Firebase Admin SDK:', e.message);
-    throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT: ${e.message}`);
-  }
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      // Replace escaped newlines from environment variable
+      privateKey: privateKey.replace(/\\n/g, '\n'),
+    }),
+    projectId: 'global-talent-bridge',
+  });
 }
-
 
 const adminAuth = admin.auth();
 const adminDb = admin.firestore();
