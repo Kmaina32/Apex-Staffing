@@ -16,6 +16,8 @@ export function Header() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/jobs', label: 'Find a Job' },
+    { href: '/about', label: 'About Us' },
+    { href: '/contact', label: 'Contact' },
     { href: '/dashboard', label: 'My Dashboard' },
   ];
 

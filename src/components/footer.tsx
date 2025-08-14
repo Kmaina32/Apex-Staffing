@@ -22,10 +22,10 @@ export function Footer() {
             </div>
              <div className="flex flex-col space-y-2">
                 <h4 className="font-semibold">Company</h4>
-                <Link href="#" className="text-muted-foreground hover:text-primary text-sm">About Us</Link>
-                <Link href="#" className="text-muted-foreground hover:text-primary text-sm">Contact</Link>
-                <Link href="#" className="text-muted-foreground hover:text-primary text-sm">Privacy Policy</Link>
-                <Link href="#" className="text-muted-foreground hover:text-primary text-sm">Terms of Service</Link>
+                <Link href="/about" className="text-muted-foreground hover:text-primary text-sm">About Us</Link>
+                <Link href="/contact" className="text-muted-foreground hover:text-primary text-sm">Contact</Link>
+                <Link href="/privacy" className="text-muted-foreground hover:text-primary text-sm">Privacy Policy</Link>
+                <Link href="/terms" className="text-muted-foreground hover:text-primary text-sm">Terms of Service</Link>
             </div>
         </div>
         <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
