@@ -42,6 +42,49 @@ export async function getUsers() {
   }
 }
 
+export async function getUsersCount(): Promise<number> {
+    if (!auth) {
+        console.error('Firebase Admin Auth is not initialized.');
+        return 0;
+    }
+    try {
+        const listUsersResult = await auth.listUsers();
+        return listUsersResult.users.length;
+    } catch (error) {
+        console.error('Error listing users:', error);
+        return 0;
+    }
+}
+
+export async function getJobsCount(): Promise<number> {
+    if (!db) {
+        console.error('Firebase Admin Firestore is not initialized.');
+        return 0;
+    }
+    try {
+        const snapshot = await db.collection('jobs').get();
+        return snapshot.size;
+    } catch (error) {
+        console.error('Error getting jobs count:', error);
+        return 0;
+    }
+}
+
+export async function getApplicationsCount(): Promise<number> {
+    if (!db) {
+        console.error('Firebase Admin Firestore is not initialized.');
+        return 0;
+    }
+    try {
+        const snapshot = await db.collection('applications').get();
+        return snapshot.size;
+    } catch (error) {
+        console.error('Error getting applications count:', error);
+        return 0;
+    }
+}
+
+
 export async function addJob(job: Omit<Job, 'id'>) {
     if (!db) {
         throw new Error('Firebase Admin Firestore is not initialized.');
