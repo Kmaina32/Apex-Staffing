@@ -1,6 +1,9 @@
 
 import * as admin from 'firebase-admin';
 import type { Job } from './types';
+import { config } from 'dotenv';
+
+config();
 
 const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
 let serviceAccount: admin.ServiceAccount | undefined;
