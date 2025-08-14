@@ -9,7 +9,6 @@ let app: App;
 let auth: Auth;
 let db: Firestore;
 
-// This guard prevents re-initialization in a hot-reload environment.
 if (!admin.apps.length) {
   const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
   if (!serviceAccountString) {
