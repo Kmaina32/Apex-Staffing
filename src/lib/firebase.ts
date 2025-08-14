@@ -8,7 +8,7 @@ const firebaseConfig = {
   "projectId": "global-talent-bridge",
   "appId": "1:364901720215:web:05efc1fa4f760d050609d2",
   "storageBucket": "global-talent-bridge.firebasestorage.app",
-  "apiKey": "AIzaSyDKo4bXFxJOHmBC_Qpgsk8-LIE2HEXYABs",
+  "apiKey": "AIzaSyDdkhdg3Cw82Te_IG-N88PzItMhEsVWYbg",
   "authDomain": "global-talent-bridge.firebaseapp.com",
   "measurementId": "",
   "messagingSenderId": "364901720215"
