@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from '@/components/ui/sheet';
 import { Menu, Triangle, LogOut, User, LayoutDashboard, UserPlus, Settings, Shield, Briefcase, Users, Sun, Moon } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -46,6 +46,7 @@ export function Header() {
     { href: '/admin', label: 'Dashboard', icon: <LayoutDashboard /> },
     { href: '/admin/jobs', label: 'Jobs', icon: <Briefcase /> },
     { href: '/admin/candidates', label: 'Candidates', icon: <Users /> },
+    { href: '/admin/settings', label: 'Settings', icon: <Settings /> },
   ];
 
   const getNavLinks = () => {
