@@ -6,9 +6,16 @@ import type { Firestore } from 'firebase-admin/firestore';
 import type { Job } from './types';
 
 // This is a singleton pattern to ensure we only initialize Firebase Admin once.
-const getFirebaseAdmin = () => {
+let app: App;
+let auth: Auth;
+let db: Firestore;
+
+function initializeFirebaseAdmin() {
   if (admin.apps.length > 0) {
-    return admin.app();
+    app = admin.app();
+    auth = admin.auth(app);
+    db = admin.firestore(app);
+    return;
   }
 
   const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
@@ -18,19 +25,19 @@ const getFirebaseAdmin = () => {
 
   try {
     const serviceAccount = JSON.parse(serviceAccountString);
-    return admin.initializeApp({
+    app = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
+    auth = admin.auth(app);
+    db = admin.firestore(app);
   } catch (error: any) {
      console.error('Error parsing service account key or initializing Firebase Admin:', error);
      throw new Error('Firebase Admin SDK initialization failed: ' + error.message);
   }
 };
 
-
-const app: App = getFirebaseAdmin();
-const auth: Auth = admin.auth(app);
-const db: Firestore = admin.firestore(app);
+// Initialize on module load
+initializeFirebaseAdmin();
 
 export { app, auth, db };
 
