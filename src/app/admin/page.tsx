@@ -9,9 +9,6 @@ import { Loader2, ShieldCheck, Briefcase, Users, FileText } from 'lucide-react';
 import { ADMIN_USER_IDS } from '@/lib/admin';
 import { AdminStatCard } from '@/components/admin/admin-stat-card';
 import { getJobs, getAllApplications } from '@/lib/firebase';
-import type { Job, Application } from '@/lib/types';
-import { getUsers } from '@/lib/firebase-admin';
-import type { UserRecord } from 'firebase-admin/auth';
 
 
 export default function AdminPage() {
@@ -35,38 +32,38 @@ export default function AdminPage() {
     async function fetchData() {
         if (isAdmin) {
             setLoadingData(true);
-            const jobs = await getJobs();
-            setTotalJobs(jobs.length);
+            try {
+              const jobsPromise = getJobs();
+              const applicationsPromise = getAllApplications();
+              const usersPromise = fetch('/api/get-users');
+              
+              const [jobs, applications, usersResponse] = await Promise.all([
+                  jobsPromise,
+                  applicationsPromise,
+                  usersPromise
+              ]);
 
-            // This is a client-side call to a server action.
-            // This is not ideal but works for this prototype.
-            // In production, you might fetch this from an API route.
-            const usersResponse = await fetch('/api/get-users');
-            if(usersResponse.ok) {
-                const users = await usersResponse.json();
-                setTotalCandidates(users.length);
+              setTotalJobs(jobs.length);
+              setTotalApplications(applications.length);
+
+              if (usersResponse.ok) {
+                  const users = await usersResponse.json();
+                  setTotalCandidates(users.length);
+              } else {
+                  setTotalCandidates(0);
+              }
+
+            } catch (error) {
+              console.error("Failed to fetch admin data:", error);
+              setTotalJobs(0);
+              setTotalApplications(0);
+              setTotalCandidates(0);
+            } finally {
+               setLoadingData(false);
             }
-
-            const applications = await getAllApplications();
-            setTotalApplications(applications.length);
-            
-            setLoadingData(false);
         }
     }
-    // We can't call the server action directly in useEffect.
-    // A better approach is an API route or fetching inside a server component.
-    // For now, let's just update jobs and applications
-     async function fetchCounts() {
-        if (isAdmin) {
-            setLoadingData(true);
-            const jobs = await getJobs();
-            setTotalJobs(jobs.length);
-            const applications = await getAllApplications();
-            setTotalApplications(applications.length);
-            setLoadingData(false);
-        }
-    }
-    fetchCounts();
+    fetchData();
   }, [isAdmin]);
 
   if (authLoading || !isAdmin) {
@@ -97,7 +94,6 @@ export default function AdminPage() {
         <AdminStatCard 
           title="Total Candidates"
           value={loadingData ? '...' : totalCandidates.toString()}
-          description="Real-time count disabled for prototype"
           icon={<Users className="h-6 w-6 text-muted-foreground" />}
         />
         <AdminStatCard 
