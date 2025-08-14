@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { autoFillFromCV } from '@/app/actions';
-import { Loader2, Upload, Check, AlertCircle } from 'lucide-react';
+import { Loader2, Upload, Check } from 'lucide-react';
 
 const formSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters."),
@@ -48,10 +48,21 @@ export function RegisterForm() {
     const [currentStep, setCurrentStep] = React.useState(0);
     const [cvFileName, setCvFileName] = React.useState<string | null>(null);
     const { toast } = useToast();
+    const [isPending, startTransition] = React.useTransition();
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            fullName: '',
+            nationality: '',
+            currentLocation: '',
+            email: '',
+            phone: '',
+            jobSector: '',
+            languages: '',
+            workExperience: '',
+            education: '',
+            availability: '',
             willingToRelocate: false,
             hasCriminalRecord: false,
             preferredCountries: [],
@@ -59,13 +70,12 @@ export function RegisterForm() {
     });
 
     const [formFillState, formFillAction] = useActionState(autoFillFromCV, { message: "" });
-    const [isParsing, setIsParsing] = React.useState(false);
 
     React.useEffect(() => {
         setIsParsing(false);
         if (formFillState.data) {
             Object.entries(formFillState.data).forEach(([key, value]) => {
-                if (value) {
+                if (value && key in form.getValues()) {
                     form.setValue(key as keyof FormData, value);
                 }
             });
@@ -84,6 +94,8 @@ export function RegisterForm() {
         }
     }, [formFillState, form, toast]);
 
+    const [isParsing, setIsParsing] = React.useState(false);
+
     const handleCvUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -94,7 +106,9 @@ export function RegisterForm() {
                 const dataUri = e.target?.result as string;
                 const formData = new FormData();
                 formData.append('cvDataUri', dataUri);
-                formFillAction(formData);
+                startTransition(() => {
+                    formFillAction(formData);
+                });
             };
             reader.readAsDataURL(file);
         }
@@ -220,8 +234,8 @@ export function RegisterForm() {
                     </label>
                 </Button>
                 <Input id="cv-upload" type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={handleCvUpload} />
-                {isParsing && <Loader2 className="absolute top-2 left-32 h-5 w-5 animate-spin" />}
-                {cvFileName && !isParsing && <span className="ml-4 text-sm text-muted-foreground">{cvFileName} <Check className="inline h-4 w-4 text-green-500"/></span>}
+                {(isParsing || isPending) && <Loader2 className="absolute top-2 left-32 h-5 w-5 animate-spin" />}
+                {cvFileName && !(isParsing || isPending) && <span className="ml-4 text-sm text-muted-foreground">{cvFileName} <Check className="inline h-4 w-4 text-green-500"/></span>}
               </div>
             </FormItem>
              <FormField name="availability" control={form.control} render={({ field }) => (
@@ -256,3 +270,5 @@ export function RegisterForm() {
     </FormProvider>
   );
 }
+
+    
