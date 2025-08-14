@@ -1,5 +1,6 @@
+
 import { config } from 'dotenv';
-config();
+config({ path: '.env' });
 
 import '@/ai/flows/auto-match-candidates-to-jobs.ts';
 import '@/ai/flows/candidate-scoring.ts';
