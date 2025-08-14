@@ -93,12 +93,6 @@ const exampleJobs = [
 
 export async function GET() {
     try {
-        // Clear existing jobs to prevent duplicates if seeding multiple times
-        // This is a simple approach; in a real app, you might want a more sophisticated check.
-        // For this prototype, we assume we can clear and re-seed.
-        // NOTE: Clearing collections from a client-triggered API is not recommended for production.
-        // This is simplified for the prototype's purpose.
-        
         // As we can't easily clear a collection from here without complex logic,
         // we'll just add the jobs. The admin can manage duplicates if they re-seed.
 
