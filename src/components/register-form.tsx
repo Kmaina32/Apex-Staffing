@@ -249,8 +249,8 @@ export function RegisterForm() {
 
         <div className="flex gap-4 pt-4">
           {currentStep > 0 && <Button type="button" onClick={prev} variant="secondary">Back</Button>}
-          {currentStep < steps.length - 1 && <Button type="button" onClick={next} variant="accent">Next</Button>}
-          {currentStep === steps.length - 1 && <Button type="submit" variant="accent">Submit Application</Button>}
+          {currentStep < steps.length - 1 && <Button type="button" onClick={next}>Next</Button>}
+          {currentStep === steps.length - 1 && <Button type="submit">Submit Application</Button>}
         </div>
       </form>
     </FormProvider>

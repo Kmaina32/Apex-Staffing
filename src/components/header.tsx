@@ -81,7 +81,7 @@ export function Header() {
              <Button asChild variant="ghost">
               <Link href="#">Log In</Link>
             </Button>
-            <Button asChild variant="accent">
+            <Button asChild>
               <Link href="/register">Register</Link>
             </Button>
           </nav>

@@ -20,15 +20,15 @@ export default async function JobsPage() {
       </header>
 
       {/* Filters */}
-      <Card className="p-4 md:p-6 mb-8 shadow-sm">
+      <Card className="p-4 md:p-6 mb-8 shadow-sm bg-card">
         <CardContent className="p-0 pt-4 md:pt-0">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input placeholder="Job title, keywords..." className="pl-10" />
+              <Input placeholder="Job title, keywords..." className="pl-10 bg-background" />
             </div>
             <Select>
-              <SelectTrigger>
+              <SelectTrigger className="bg-background">
                 <SelectValue placeholder="Select a country" />
               </SelectTrigger>
               <SelectContent>
@@ -38,7 +38,7 @@ export default async function JobsPage() {
               </SelectContent>
             </Select>
             <Select>
-              <SelectTrigger>
+              <SelectTrigger className="bg-background">
                 <SelectValue placeholder="Select a job sector" />
               </SelectTrigger>
               <SelectContent>
@@ -47,7 +47,7 @@ export default async function JobsPage() {
                 ))}
               </SelectContent>
             </Select>
-            <Button variant="accent" className="w-full">
+            <Button className="w-full">
               <Search className="mr-2 h-4 w-4" />
               Search Jobs
             </Button>

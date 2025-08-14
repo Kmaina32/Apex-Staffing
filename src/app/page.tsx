@@ -23,7 +23,7 @@ export default async function Home() {
           <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-8">
             Your journey to an international career starts here. We connect talented professionals with verified employers across the globe.
           </p>
-          <Button asChild size="lg" variant="accent" className="shadow-lg hover:shadow-xl transition-shadow">
+          <Button asChild size="lg" className="shadow-lg hover:shadow-xl transition-shadow">
             <Link href="/register">
               Register to Work Abroad <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
@@ -90,7 +90,7 @@ export default async function Home() {
                     ))}
                 </div>
                 <div className="text-center mt-12">
-                    <Button asChild variant="link" className="text-lg text-primary">
+                    <Button asChild variant="link" className="text-lg">
                     <Link href="/jobs">
                         View All Jobs <ArrowRight className="ml-2 h-5 w-w" />
                     </Link>
