@@ -93,20 +93,19 @@ const exampleJobs = [
 
 export async function GET() {
     try {
-        // As we can't easily clear a collection from here without complex logic,
-        // we'll just add the jobs. The admin can manage duplicates if they re-seed.
-
         const results = await Promise.all(
             exampleJobs.map(job => addJob(job))
         );
 
         return NextResponse.json({
+            success: true,
             message: "Database seeded successfully!",
             jobIds: results,
         });
     } catch (error: any) {
         console.error("Error seeding database:", error);
         return NextResponse.json({ 
+            success: false,
             message: "Error seeding database.",
             error: error.message 
         }, { status: 500 });

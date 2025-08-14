@@ -31,9 +31,20 @@ export default function AdminJobsPage() {
   const handleSeed = async () => {
     startSeedingTransition(async () => {
         const response = await fetch('/api/seed-database');
+        
+        if (!response.ok) {
+           const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred during seeding.' }));
+           toast({
+                title: "Seeding Failed",
+                description: errorData.message || "The server returned an error.",
+                variant: "destructive"
+            });
+            return;
+        }
+
         const result = await response.json();
 
-        if (response.ok) {
+        if (result.success) {
             toast({
                 title: "Database Seeded!",
                 description: "Your database has been populated with sample job listings."
