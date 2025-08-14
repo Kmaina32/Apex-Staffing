@@ -55,7 +55,7 @@ export default function DashboardPage() {
     <div className="container mx-auto py-8 px-4">
       <header className="mb-8 flex items-center justify-between">
         <div>
-            <h1 className="text-3xl font-bold font-headline">My Dashboard</h1>
+            <h1 className="text-3xl font-bold font-headline">Welcome, {user.displayName || 'User'}!</h1>
             <p className="text-muted-foreground">Track your job applications and manage your profile.</p>
         </div>
         <Button asChild variant="outline">
