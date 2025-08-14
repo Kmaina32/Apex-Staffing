@@ -5,14 +5,14 @@ import type { Job, Application } from '@/lib/types';
 
 
 const firebaseConfig = {
-  "projectId": "global-talent-bridge",
-  "appId": "1:364901720215:web:05efc1fa4f760d050609d2",
-  "storageBucket": "global-talent-bridge.firebasestorage.app",
-  "apiKey": "AIzaSyDdkhdg3Cw82Te_IG-N88PzItMhEsVWYbg",
-  "authDomain": "global-talent-bridge.firebaseapp.com",
-  "measurementId": "",
-  "messagingSenderId": "364901720215"
+  apiKey: "AIzaSyDKo4bXFxJOHmBC_Qpgsk8-LIE2HEXYABs",
+  authDomain: "global-talent-bridge.firebaseapp.com",
+  projectId: "global-talent-bridge",
+  storageBucket: "global-talent-bridge.firebasestorage.app",
+  messagingSenderId: "364901720215",
+  appId: "1:364901720215:web:05efc1fa4f760d050609d2"
 };
+
 
 // Initialize Firebase
 export const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
