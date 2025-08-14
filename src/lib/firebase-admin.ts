@@ -1,80 +1,42 @@
+
 import admin from 'firebase-admin';
 import type { App } from 'firebase-admin/app';
 import type { Auth } from 'firebase-admin/auth';
 import type { Firestore } from 'firebase-admin/firestore';
 import type { Job } from './types';
 
-interface FirebaseAdminInstances {
-  app: App;
-  auth: Auth;
-  db: Firestore;
-}
-
-let adminInstances: FirebaseAdminInstances | null = null;
-
-function initializeFirebaseAdmin(): FirebaseAdminInstances {
-  if (adminInstances) {
-    return adminInstances;
-  }
-
+// This is a singleton pattern to ensure we only initialize Firebase Admin once.
+const getFirebaseAdmin = () => {
   if (admin.apps.length > 0) {
-    const app = admin.app();
-    adminInstances = {
-      app,
-      auth: admin.auth(app),
-      db: admin.firestore(app),
-    };
-    return adminInstances;
+    return admin.app();
   }
 
   const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
   if (!serviceAccountString) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
+    throw new Error('The FIREBASE_SERVICE_ACCOUNT environment variable is not set. Please check your environment configuration.');
   }
 
   try {
     const serviceAccount = JSON.parse(serviceAccountString);
-    const app = admin.initializeApp({
+    return admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
-    
-    adminInstances = {
-      app,
-      auth: admin.auth(app),
-      db: admin.firestore(app),
-    };
-    
-    return adminInstances;
   } catch (error: any) {
-    console.error('Error parsing service account key or initializing Firebase Admin:', error);
-    throw new Error('Firebase Admin SDK initialization failed: ' + error.message);
+     console.error('Error parsing service account key or initializing Firebase Admin:', error);
+     throw new Error('Firebase Admin SDK initialization failed: ' + error.message);
   }
-}
-
-function getAdminInstances(): FirebaseAdminInstances {
-    if (!adminInstances) {
-        initializeFirebaseAdmin();
-    }
-    return adminInstances!;
-}
-
-export const app: App = getAdminInstances().app;
-export const auth: Auth = getAdminInstances().auth;
-export const db: Firestore = getAdminInstances().db;
+};
 
 
-// Functions that rely on db/auth should check if they are initialized
-async function ensureDb() {
-    return getAdminInstances().db;
-}
+const app: App = getFirebaseAdmin();
+const auth: Auth = admin.auth(app);
+const db: Firestore = admin.firestore(app);
 
-async function ensureAuth() {
-    return getAdminInstances().auth;
-}
+export { app, auth, db };
 
 
+// Functions that use the admin SDK
 export async function getUsers(): Promise<admin.auth.UserInfo[]> {
-  const auth = await ensureAuth();
   try {
     const listUsersResult = await auth.listUsers();
     return listUsersResult.users.map(user => user.toJSON() as admin.auth.UserInfo);
@@ -85,7 +47,6 @@ export async function getUsers(): Promise<admin.auth.UserInfo[]> {
 }
 
 export async function getUsersCount(): Promise<number> {
-  const auth = await ensureAuth();
   try {
     const listUsersResult = await auth.listUsers();
     return listUsersResult.users.length;
@@ -96,7 +57,6 @@ export async function getUsersCount(): Promise<number> {
 }
 
 export async function getJobsCount(): Promise<number> {
-  const db = await ensureDb();
   try {
     const snapshot = await db.collection('jobs').get();
     return snapshot.size;
@@ -107,7 +67,6 @@ export async function getJobsCount(): Promise<number> {
 }
 
 export async function getApplicationsCount(): Promise<number> {
-  const db = await ensureDb();
   try {
     const snapshot = await db.collection('applications').get();
     return snapshot.size;
@@ -118,7 +77,6 @@ export async function getApplicationsCount(): Promise<number> {
 }
 
 export async function addJob(job: Omit<Job, 'id'>) {
-  const db = await ensureDb();
   try {
     const docRef = await db.collection('jobs').add(job);
     return docRef.id;
@@ -129,7 +87,6 @@ export async function addJob(job: Omit<Job, 'id'>) {
 }
 
 export async function createUser(data: { uid: string; email: string; displayName: string }) {
-  const db = await ensureDb();
   try {
     await db.collection('users').doc(data.uid).set({
       email: data.email,
@@ -143,8 +100,6 @@ export async function createUser(data: { uid: string; email: string; displayName
 }
 
 export async function updateUser(uid: string, data: { displayName?: string; photoURL?: string }) {
-    const auth = await ensureAuth();
-    const db = await ensureDb();
   try {
     // Update Firebase Auth
     await auth.updateUser(uid, {
@@ -172,7 +127,6 @@ export async function updateUser(uid: string, data: { displayName?: string; phot
 }
 
 export async function updateSettings(documentId: string, settings: any) {
-  const db = await ensureDb();
   try {
     const settingsRef = db.collection('settings').doc(documentId);
     await settingsRef.set(settings, { merge: true });
