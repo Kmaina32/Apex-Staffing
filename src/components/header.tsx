@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Triangle, LogOut, User, LayoutDashboard, UserPlus, Settings, Shield } from 'lucide-react';
+import { Menu, Triangle, LogOut, User, LayoutDashboard, UserPlus, Settings, Shield, Briefcase, Users } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import * as React from 'react';
@@ -22,6 +22,7 @@ export function Header() {
   const { user } = useAuth();
 
   const isAdmin = user ? ADMIN_USER_IDS.includes(user.uid) : false;
+  const onAdminPage = pathname.startsWith('/admin');
 
   const handleLogout = async () => {
     await logout();
@@ -35,11 +36,27 @@ export function Header() {
 
   const loggedInNavLinks = [
     { href: '/dashboard', label: 'Dashboard' },
-    { href: '/jobs', label: 'Find Job' },
-    { href: '/applications', label: 'Applications' },
+    { href: '/jobs', label: 'Find a Job' },
+    { href: '/applications', label: 'My Applications' },
   ];
 
-  const navLinks = user ? loggedInNavLinks : baseNavLinks;
+  const adminNavLinks = [
+    { href: '/admin', label: 'Dashboard', icon: <LayoutDashboard /> },
+    { href: '/admin/jobs', label: 'Jobs', icon: <Briefcase /> },
+    { href: '/admin/candidates', label: 'Candidates', icon: <Users /> },
+  ];
+
+  const getNavLinks = () => {
+    if (isAdmin && onAdminPage) {
+      return adminNavLinks;
+    }
+    if (user) {
+      return loggedInNavLinks;
+    }
+    return baseNavLinks;
+  }
+
+  const navLinks = getNavLinks();
 
 
   return (
@@ -56,10 +73,11 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "transition-colors hover:text-foreground/80",
+                  "transition-colors hover:text-foreground/80 flex items-center gap-2",
                   pathname === link.href ? "text-foreground" : "text-foreground/60"
                 )}
               >
+                {(isAdmin && onAdminPage) && link.icon}
                 {link.label}
               </Link>
             ))}
@@ -87,10 +105,11 @@ export function Header() {
                         href={link.href}
                         onClick={() => setOpen(false)}
                         className={cn(
-                          "text-lg font-medium hover:text-primary",
+                          "text-lg font-medium hover:text-primary flex items-center gap-2",
                           pathname === link.href ? "text-primary" : "text-foreground/80"
                         )}
                     >
+                        {(isAdmin && onAdminPage) && link.icon}
                         {link.label}
                     </Link>
                 ))}
@@ -125,6 +144,9 @@ export function Header() {
                         <Link href="/admin"><Shield className="mr-2 h-4 w-4" />Admin</Link>
                       </DropdownMenuItem>
                     )}
+                     <DropdownMenuItem asChild>
+                      <Link href="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/profile"><User className="mr-2 h-4 w-4" />Profile</Link>
                     </DropdownMenuItem>
