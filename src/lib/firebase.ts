@@ -47,7 +47,7 @@ export async function getAllApplications(): Promise<Application[]> {
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Application));
 }
 
-export async function getSettings(documentId: string): Promise<any | null> {
+export async function getSettings(documentId: string): Promise<any | null> { 
     const docRef = doc(db, 'settings', documentId);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
