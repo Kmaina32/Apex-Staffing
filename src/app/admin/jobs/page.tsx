@@ -31,7 +31,7 @@ export default function AdminJobsPage() {
   const handleSeed = async () => {
     startSeedingTransition(async () => {
         try {
-            const response = await fetch('/api/seed-database');
+            const response = await fetch('/api/generate-and-seed-jobs');
 
             // Check if the response is ok (status in the range 200-299)
             if (!response.ok) {
@@ -51,7 +51,7 @@ export default function AdminJobsPage() {
             if (result.success) {
                 toast({
                     title: "Database Seeded!",
-                    description: "Your database has been populated with sample job listings."
+                    description: "Your database has been populated with AI-generated job listings."
                 });
                 // Refresh the job list after seeding
                 setLoading(true);
@@ -87,7 +87,7 @@ export default function AdminJobsPage() {
             <div className="flex items-center gap-2">
               <Button onClick={handleSeed} disabled={isSeeding} variant="outline">
                 {isSeeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <DatabaseZap className="mr-2 h-4 w-4" />}
-                Seed Jobs
+                Seed Jobs with AI
               </Button>
               <Button asChild>
                   <Link href="/admin/jobs/new">
@@ -134,7 +134,7 @@ export default function AdminJobsPage() {
                     )) : (
                         <TableRow>
                             <TableCell colSpan={4} className="text-center h-24">
-                                No jobs created yet. Use the "Seed Jobs" button to add some examples.
+                                No jobs created yet. Use the "Seed Jobs with AI" button to add some examples.
                             </TableCell>
                         </TableRow>
                     )}
