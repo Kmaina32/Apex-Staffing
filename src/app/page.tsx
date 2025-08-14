@@ -2,6 +2,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Briefcase, FileText, UserCheck, Loader2 } from 'lucide-react';
@@ -34,18 +35,13 @@ export default function Home() {
         getSettings('landingPage').then(settings => {
           if (settings) {
             setHeroImages([
-              settings.heroImage1 || 'https://placehold.co/1200x500.png',
-              settings.heroImage2 || 'https://placehold.co/1200x500.png',
-              settings.heroImage3 || 'https://placehold.co/1200x500.png',
-              settings.heroImage4 || 'https://placehold.co/1200x500.png',
-            ]);
+              settings.heroImage1,
+              settings.heroImage2,
+              settings.heroImage3,
+              settings.heroImage4,
+            ].filter(Boolean));
           } else {
-             setHeroImages([
-              'https://placehold.co/1200x500.png',
-              'https://placehold.co/1200x500.png',
-              'https://placehold.co/1200x500.png',
-              'https://placehold.co/1200x500.png',
-            ]);
+             setHeroImages([]);
           }
           setSettingsLoading(false);
         })
@@ -62,18 +58,40 @@ export default function Home() {
     )
   }
 
+  const displayImages = heroImages.length > 0 ? heroImages : ['https://placehold.co/1200x500.png'];
+
   return (
     <div className="flex flex-col space-y-12 md:space-y-24 pb-12">
       {/* Hero Section */}
       <section className="w-full pt-16 md:pt-24">
         <div className="container mx-auto px-4">
-           <div
-            className="relative bg-cover bg-center rounded-2xl p-8 md:p-16 text-center text-white overflow-hidden min-h-[400px] md:min-h-[500px] flex flex-col justify-center"
-            style={{backgroundImage: `url(${heroImages[0]})`}}
-            data-ai-hint="people working office"
-          >
-            <div className="absolute inset-0 bg-black/60"></div>
-            <div className="relative z-10 flex flex-col items-center">
+           <div className="relative rounded-2xl overflow-hidden text-center text-white min-h-[400px] md:min-h-[500px]">
+             <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full h-full"
+              >
+                <CarouselContent>
+                  {displayImages.map((src, index) => (
+                    <CarouselItem key={index}>
+                      <div className="relative w-full h-[400px] md:h-[500px]">
+                        <Image
+                          src={src}
+                          alt={`Hero background image ${index + 1}`}
+                          layout="fill"
+                          objectFit="cover"
+                          className="w-full h-full"
+                          data-ai-hint="people working office"
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+            </Carousel>
+
+            <div className="absolute inset-0 bg-black/60 flex flex-col justify-center items-center p-8">
               <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 font-headline">
                 Find Jobs Abroad.
                 <br />
