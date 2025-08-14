@@ -1,4 +1,7 @@
 
+'use client';
+
+import { useAuth } from '@/hooks/use-auth';
 import { getApplicationsForUser } from '@/lib/firebase';
 import type { Application } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
@@ -7,12 +10,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Edit, FileArchive } from 'lucide-react';
+import { Edit, FileArchive, LogOut } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { logout } from '@/lib/auth';
 
 function getStatusBadgeVariant(status: Application['status']) {
   switch (status) {
     case 'Offer Made':
-      return 'default'; // Using a custom style for success-like state might be needed
+      return 'default';
     case 'Shortlisted':
     case 'Interview Scheduled':
       return 'default';
@@ -26,10 +32,31 @@ function getStatusBadgeVariant(status: Application['status']) {
   }
 }
 
-export default async function DashboardPage() {
-  // NOTE: Using a hardcoded user ID for now.
-  // In a real application, you would get this from your authentication system.
-  const applications = await getApplicationsForUser('user123');
+export default function DashboardPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const [applications, setApplications] = useState<Application[]>([]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    } else if (user) {
+      getApplicationsForUser(user.uid).then(setApplications);
+    }
+  }, [user, loading, router]);
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/');
+  };
+
+  if (loading || !user) {
+    return (
+      <div className="container mx-auto py-8 px-4 text-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -39,7 +66,6 @@ export default async function DashboardPage() {
       </header>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        {/* Main Content: Application History */}
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
@@ -80,16 +106,15 @@ export default async function DashboardPage() {
           </Card>
         </div>
 
-        {/* Sidebar: Profile & Actions */}
         <div className="lg:col-span-1">
           <Card className="sticky top-20">
             <CardHeader className="items-center text-center">
                 <Avatar className="w-24 h-24 mb-4">
-                    <AvatarImage src="https://placehold.co/100x100.png" alt="John Doe" />
-                    <AvatarFallback>JD</AvatarFallback>
+                    <AvatarImage src={user.photoURL || 'https://placehold.co/100x100.png'} alt={user.displayName || 'User'} />
+                    <AvatarFallback>{user.displayName?.charAt(0) || user.email?.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <CardTitle>John Doe</CardTitle>
-                <CardDescription>johndoe@example.com</CardDescription>
+                <CardTitle>{user.displayName || 'User'}</CardTitle>
+                <CardDescription>{user.email}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
                 <Button asChild className="w-full">
@@ -97,6 +122,9 @@ export default async function DashboardPage() {
                 </Button>
                 <Button asChild variant="outline" className="w-full">
                     <Link href="#"><FileArchive className="mr-2 h-4 w-4" /> Manage Documents</Link>
+                </Button>
+                <Button onClick={handleLogout} variant="destructive" className="w-full">
+                  <LogOut className="mr-2 h-4 w-4" /> Logout
                 </Button>
             </CardContent>
           </Card>

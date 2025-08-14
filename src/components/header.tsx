@@ -4,22 +4,34 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Triangle } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { Menu, Triangle, LogOut } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import * as React from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { logout } from '@/lib/auth';
 
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
+  const { user } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/');
+  };
 
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/jobs', label: 'Find a Job' },
     { href: '/about', label: 'About Us' },
     { href: '/contact', label: 'Contact' },
-    { href: '/dashboard', label: 'My Dashboard' },
   ];
+
+  if (user) {
+    navLinks.push({ href: '/dashboard', label: 'My Dashboard' });
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -80,12 +92,21 @@ export function Header() {
         
         <div className="flex flex-1 items-center justify-end space-x-2">
           <nav className="flex items-center gap-2">
-             <Button asChild variant="ghost">
-              <Link href="#">Log In</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/register">Register</Link>
-            </Button>
+             {user ? (
+               <Button onClick={handleLogout} variant="ghost">
+                 <LogOut className="mr-2 h-4 w-4" />
+                 Log Out
+               </Button>
+             ) : (
+               <>
+                <Button asChild variant="ghost">
+                  <Link href="/login">Log In</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/register">Register</Link>
+                </Button>
+               </>
+             )}
           </nav>
         </div>
       </div>
