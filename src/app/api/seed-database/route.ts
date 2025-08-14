@@ -51,6 +51,42 @@ const exampleJobs = [
     "languageRequirements": ["English"],
     "visaSponsored": false,
     "description": "Manage our luxury resort in Queensland. Must have working rights in Australia."
+  },
+  {
+    "title": "Data Scientist",
+    "company": "QuantumLeap AI",
+    "country": "United Kingdom",
+    "countryCode": "gb",
+    "salary": "£60,000 - £75,000 per year",
+    "contractDuration": "Permanent",
+    "qualifications": ["MSc or PhD in a quantitative field", "Proficiency in Python/R", "Experience with ML frameworks"],
+    "languageRequirements": ["English"],
+    "visaSponsored": true,
+    "description": "We are looking for a Data Scientist to join our team in London and work on cutting-edge AI problems."
+  },
+  {
+    "title": "Marketing Director",
+    "company": "GlobalReach Inc.",
+    "country": "United States",
+    "countryCode": "us",
+    "salary": "$120,000 - $150,000 per year",
+    "contractDuration": "Permanent",
+    "qualifications": ["Bachelor’s in Marketing or related field", "10+ years of marketing experience", "Proven leadership skills"],
+    "languageRequirements": ["English"],
+    "visaSponsored": false,
+    "description": "Lead our marketing efforts from our New York office. This role requires a strategic thinker with a passion for global markets."
+  },
+  {
+    "title": "Mechanical Engineer",
+    "company": "Precision Robotics",
+    "country": "Japan",
+    "countryCode": "jp",
+    "salary": "¥7,000,000 - ¥9,000,000 per year",
+    "contractDuration": "Permanent",
+    "qualifications": ["Degree in Mechanical Engineering", "Experience with CAD software", "Robotics experience a plus"],
+    "languageRequirements": ["Japanese (Business Level)", "English (Conversational)"],
+    "visaSponsored": true,
+    "description": "Join our innovative team in Tokyo to design and build next-generation robotics."
   }
 ];
 
