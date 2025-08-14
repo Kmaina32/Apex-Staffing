@@ -4,7 +4,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useActionState, useTransition } from 'react';
+import { useActionState, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,7 +38,7 @@ export default function NewJobPage() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
-  const initialState: FormState = { message: "", errors: {} };
+  const initialState: FormState = { message: "", errors: undefined };
   const [formState, formAction] = useActionState(createJobAction, initialState);
 
   const form = useForm<JobFormData>({
@@ -57,19 +57,21 @@ export default function NewJobPage() {
     },
   });
 
-  if (formState.message === 'success') {
-    toast({
-      title: 'Job Created!',
-      description: 'The new job listing has been successfully created.',
-    });
-    router.push('/admin/jobs');
-  } else if (formState.message === 'error') {
-     toast({
-      title: 'An Error Occurred',
-      description: 'Something went wrong. Please try again.',
-      variant: 'destructive',
-    });
-  }
+  useEffect(() => {
+    if (formState.message === 'success') {
+      toast({
+        title: 'Job Created!',
+        description: 'The new job listing has been successfully created.',
+      });
+      router.push('/admin/jobs');
+    } else if (formState.message === 'error') {
+      toast({
+        title: 'An Error Occurred',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  }, [formState, router, toast]);
 
 
   const onSubmit = (data: JobFormData) => {
