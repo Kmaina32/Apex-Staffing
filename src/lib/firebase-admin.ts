@@ -5,7 +5,7 @@ import type { Job } from './types';
 // The FIREBASE_SERVICE_ACCOUNT environment variable is expected to be loaded
 // by the application's entry point (e.g., using dotenv in next.config.js).
 
-const serviceAccountString = process.env.NEXT_PUBLIC_FIREBASE_SERVICE_ACCOUNT;
+const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
 let serviceAccount: admin.ServiceAccount | undefined;
 
 if (serviceAccountString) {
