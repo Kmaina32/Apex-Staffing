@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
@@ -58,7 +58,7 @@ export function RegisterForm() {
         },
     });
 
-    const [formFillState, formFillAction] = useFormState(autoFillFromCV, { message: "" });
+    const [formFillState, formFillAction] = useActionState(autoFillFromCV, { message: "" });
     const [isParsing, setIsParsing] = React.useState(false);
 
     React.useEffect(() => {
