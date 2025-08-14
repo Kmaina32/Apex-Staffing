@@ -2,36 +2,27 @@
 import * as admin from 'firebase-admin';
 import type { Job } from './types';
 
-let adminApp: admin.app.App;
-let adminAuth: admin.auth.Auth;
-let adminDb: admin.firestore.Firestore;
-
-function initializeFirebaseAdmin() {
-  if (admin.apps.length > 0) {
-    adminApp = admin.app();
-  } else {
-    const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
-    if (!serviceAccountString) {
-      throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
-    }
-    try {
-      const serviceAccount = JSON.parse(serviceAccountString);
-      adminApp = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        projectId: 'global-talent-bridge',
-      });
-    } catch (e: any) {
-      throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT: ${e.message}`);
-    }
+if (!admin.apps.length) {
+  const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!serviceAccountString) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
   }
-  adminAuth = admin.auth(adminApp);
-  adminDb = admin.firestore(adminApp);
+  try {
+    const serviceAccount = JSON.parse(serviceAccountString);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      projectId: 'global-talent-bridge',
+    });
+  } catch (e: any) {
+    throw new Error(`Failed to parse FIREBASE_SERVICE_ACCOUNT: ${e.message}`);
+  }
 }
 
-// Initialize on module load
-initializeFirebaseAdmin();
+const adminAuth = admin.auth();
+const adminDb = admin.firestore();
 
-export { adminApp, adminAuth, adminDb };
+export { adminAuth, adminDb };
+
 
 export async function getUsers(): Promise<admin.auth.UserInfo[]> {
   try {
