@@ -44,21 +44,30 @@ export default function Home() {
   return (
     <div className="flex flex-col space-y-12 md:space-y-24 pb-12">
       {/* Hero Section */}
-      <section className="w-full pt-20 md:pt-32">
-        <div className="container mx-auto text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 font-headline">
-            Find Jobs Abroad.
-            <br />
-            <span className="text-primary">Work Anywhere in the World.</span>
-          </h1>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground mb-8">
-            Your journey to an international career starts here. We connect talented professionals with verified employers across the globe.
-          </p>
-          <Button asChild size="lg" className="shadow-lg hover:shadow-xl transition-shadow">
-            <Link href="/register">
-              Register to Work Abroad <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
+      <section className="w-full pt-16 md:pt-24">
+        <div className="container mx-auto px-4">
+           <div
+            className="relative bg-cover bg-center rounded-2xl p-8 md:p-16 text-center text-white overflow-hidden"
+            style={{backgroundImage: "url('https://placehold.co/1200x500.png')"}}
+            data-ai-hint="people working office"
+          >
+            <div className="absolute inset-0 bg-black/60"></div>
+            <div className="relative z-10 flex flex-col items-center">
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 font-headline">
+                Find Jobs Abroad.
+                <br />
+                <span className="text-primary">Work Anywhere in the World.</span>
+              </h1>
+              <p className="max-w-2xl mx-auto text-lg md:text-xl text-neutral-200 mb-8">
+                Your journey to an international career starts here. We connect talented professionals with verified employers across the globe.
+              </p>
+              <Button asChild size="lg" className="shadow-lg hover:shadow-xl transition-shadow">
+                <Link href="/register">
+                  Register to Work Abroad <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
