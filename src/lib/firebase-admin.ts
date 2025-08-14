@@ -1,9 +1,6 @@
 
 import * as admin from 'firebase-admin';
 import type { Job } from './types';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 // This is a singleton pattern to ensure we only initialize Firebase Admin once.
 // This is crucial for serverless environments like Vercel or Firebase Functions.
