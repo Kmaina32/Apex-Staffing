@@ -50,6 +50,7 @@ function getAdminInstances(): FirebaseAdminInstances {
   }
 }
 
+
 // Functions that use the admin SDK
 export async function getUsers(): Promise<admin.auth.UserInfo[]> {
   try {
