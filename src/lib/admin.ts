@@ -8,6 +8,6 @@
 // 4. Navigate to the "Authentication" section.
 // 5. You will see a list of users. Copy the UID for your admin user account.
 export const ADMIN_USER_IDS = [
-  'REPLACE_WITH_YOUR_ADMIN_UID',
+  'u3gIVM3UDEXVJ2wt5NkCkr0kvvs2',
   // You can add more admin UIDs here
 ];
