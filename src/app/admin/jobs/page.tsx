@@ -30,35 +30,47 @@ export default function AdminJobsPage() {
 
   const handleSeed = async () => {
     startSeedingTransition(async () => {
-        const response = await fetch('/api/seed-database');
-        
-        if (!response.ok) {
-           const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred during seeding.' }));
-           toast({
-                title: "Seeding Failed",
-                description: errorData.message || "The server returned an error.",
-                variant: "destructive"
-            });
-            return;
-        }
+        try {
+            const response = await fetch('/api/seed-database');
 
-        const result = await response.json();
+            // Check if the response is ok (status in the range 200-299)
+            if (!response.ok) {
+                // Try to get a more specific error message from the response body
+                let errorData;
+                try {
+                    errorData = await response.json();
+                } catch (e) {
+                    // If the response body is not JSON, use the status text
+                    errorData = { message: response.statusText };
+                }
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            }
 
-        if (result.success) {
+            const result = await response.json();
+
+            if (result.success) {
+                toast({
+                    title: "Database Seeded!",
+                    description: "Your database has been populated with sample job listings."
+                });
+                // Refresh the job list after seeding
+                setLoading(true);
+                const updatedJobs = await getJobs();
+                setJobs(updatedJobs);
+                setLoading(false);
+                router.refresh();
+            } else {
+                 toast({
+                    title: "Seeding Failed",
+                    description: result.error || "An unknown error occurred.",
+                    variant: "destructive"
+                });
+            }
+        } catch (error: any) {
+            console.error('Seeding error:', error);
             toast({
-                title: "Database Seeded!",
-                description: "Your database has been populated with sample job listings."
-            });
-            // Refresh the job list after seeding
-            setLoading(true);
-            const updatedJobs = await getJobs();
-            setJobs(updatedJobs);
-            setLoading(false);
-            router.refresh();
-        } else {
-             toast({
-                title: "Seeding Failed",
-                description: result.error || "An unknown error occurred.",
+                title: "Seeding Operation Failed",
+                description: error.message || "An unknown error occurred. Check the console for details.",
                 variant: "destructive"
             });
         }
