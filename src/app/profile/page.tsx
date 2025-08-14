@@ -86,6 +86,7 @@ export default function ProfilePage() {
         <CardContent className="space-y-8">
             <Separator />
             <form className="space-y-6" onSubmit={handleSubmit}>
+                 <input type="hidden" name="uid" value={user.uid} />
                  <div>
                     <h3 className="text-lg font-semibold">Personal Information</h3>
                     <p className="text-sm text-muted-foreground">Update your personal details here.</p>

@@ -5,7 +5,6 @@ import { autoFillApplication, type AutoFillApplicationOutput } from '@/ai/flows/
 import { signUp } from '@/lib/auth';
 import { createUser, updateUser } from '@/lib/firebase-admin';
 import { z } from 'zod';
-import { auth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 
 
@@ -60,27 +59,25 @@ export async function signUpAction(prevState: AuthFormState, formData: FormData)
 }
 
 const updateProfileSchema = z.object({
+    uid: z.string().min(1, { message: 'User ID is missing.'}),
     fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
 });
 
 export async function updateProfileAction(prevState: UpdateProfileFormState, formData: FormData): Promise<UpdateProfileFormState> {
     
-    if (!auth.currentUser) {
-        return { error: 'You must be logged in to update your profile.' };
-    }
-
     const validatedFields = updateProfileSchema.safeParse({
+        uid: formData.get('uid'),
         fullName: formData.get('fullName'),
     });
 
     if (!validatedFields.success) {
         return {
-            error: validatedFields.error.flatten().fieldErrors.fullName?.[0],
+            error: validatedFields.error.flatten().fieldErrors.fullName?.[0] || validatedFields.error.flatten().fieldErrors.uid?.[0],
         };
     }
     
     try {
-        await updateUser(auth.currentUser.uid, {
+        await updateUser(validatedFields.data.uid, {
             displayName: validatedFields.data.fullName,
         });
         revalidatePath('/profile');
