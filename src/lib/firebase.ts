@@ -1,9 +1,8 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, doc, getDoc, query, where } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, getDoc, query, where, addDoc } from 'firebase/firestore';
 import type { Job, Application } from '@/lib/types';
-import { getAuth } from 'firebase/auth';
-import { listAllUsers } from 'firebase/auth/admin';
+
 
 const firebaseConfig = {
   "projectId": "global-talent-bridge",
@@ -43,17 +42,9 @@ export async function getApplicationsForUser(userId: string): Promise<Applicatio
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Application));
 }
 
-// Note: This function requires admin privileges to list all users.
-// It will only work when called from a secure server environment (like a Cloud Function)
-// with admin SDK, not directly from the client.
-// For the prototype, we are calling this on the client, which is not recommended for production
-// due to security and performance reasons.
-export async function getUsers() {
-    // This is a placeholder and will not work in a client-side environment.
-    // In a real app, you would have a Cloud Function that returns this data.
-    // For now, we will return an empty array to avoid breaking the app.
-    console.warn("getUsers() is a placeholder and will not fetch real user data from the client.");
-    return [];
+export async function getAllApplications(): Promise<Application[]> {
+    const snapshot = await getDocs(applicationsCollection);
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Application));
 }
 
 

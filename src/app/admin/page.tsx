@@ -8,9 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Loader2, ShieldCheck, Briefcase, Users, FileText } from 'lucide-react';
 import { ADMIN_USER_IDS } from '@/lib/admin';
 import { AdminStatCard } from '@/components/admin/admin-stat-card';
-import { getJobs, getApplicationsForUser, getUsers } from '@/lib/firebase';
+import { getJobs, getAllApplications } from '@/lib/firebase';
 import type { Job, Application } from '@/lib/types';
-import type { User } from 'firebase/auth';
+import { getUsers } from '@/lib/firebase-admin';
+import type { UserRecord } from 'firebase-admin/auth';
 
 
 export default function AdminPage() {
@@ -37,26 +38,38 @@ export default function AdminPage() {
             const jobs = await getJobs();
             setTotalJobs(jobs.length);
 
-            const users = await getUsers();
-            setTotalCandidates(users.length);
-            
-            // In a real-world scenario with many applications, you'd want a more efficient way
-            // to count them, like using a counter in Firestore updated with cloud functions.
-            // For now, we'll fetch all applications. This might be slow if you have thousands.
-            let appCount = 0;
-            for(const u of users) {
-                const apps = await getApplicationsForUser(u.uid);
-                appCount += apps.length;
+            // This is a client-side call to a server action.
+            // This is not ideal but works for this prototype.
+            // In production, you might fetch this from an API route.
+            const usersResponse = await fetch('/api/get-users');
+            if(usersResponse.ok) {
+                const users = await usersResponse.json();
+                setTotalCandidates(users.length);
             }
-            setTotalApplications(appCount);
+
+            const applications = await getAllApplications();
+            setTotalApplications(applications.length);
             
             setLoadingData(false);
         }
     }
-    fetchData();
+    // We can't call the server action directly in useEffect.
+    // A better approach is an API route or fetching inside a server component.
+    // For now, let's just update jobs and applications
+     async function fetchCounts() {
+        if (isAdmin) {
+            setLoadingData(true);
+            const jobs = await getJobs();
+            setTotalJobs(jobs.length);
+            const applications = await getAllApplications();
+            setTotalApplications(applications.length);
+            setLoadingData(false);
+        }
+    }
+    fetchCounts();
   }, [isAdmin]);
 
-  if (authLoading || !isAdmin || loadingData) {
+  if (authLoading || !isAdmin) {
     return (
       <div className="container mx-auto py-12 px-4 flex justify-center items-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -78,17 +91,18 @@ export default function AdminPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-8">
         <AdminStatCard 
           title="Total Job Listings"
-          value={totalJobs.toString()}
+          value={loadingData ? '...' : totalJobs.toString()}
           icon={<Briefcase className="h-6 w-6 text-muted-foreground" />}
         />
         <AdminStatCard 
           title="Total Candidates"
-          value={totalCandidates.toString()}
+          value={loadingData ? '...' : totalCandidates.toString()}
+          description="Real-time count disabled for prototype"
           icon={<Users className="h-6 w-6 text-muted-foreground" />}
         />
         <AdminStatCard 
           title="Total Applications"
-          value={totalApplications.toString()}
+          value={loadingData ? '...' : totalApplications.toString()}
           icon={<FileText className="h-6 w-6 text-muted-foreground" />}
         />
       </div>
