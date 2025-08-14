@@ -110,54 +110,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works Section */}
-      <section className="w-full">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 font-headline">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <Card className="border-0 shadow-none bg-transparent">
-              <CardHeader>
-                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit">
-                  <FileText className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="mt-4">1. Create Your Profile</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Fill out our detailed form and upload your CV. Our AI will help pre-fill your application to save you time.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-none bg-transparent">
-              <CardHeader>
-                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit">
-                  <Briefcase className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="mt-4">2. Get Matched with Jobs</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Our smart algorithm matches your skills and preferences with the best international job opportunities.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-0 shadow-none bg-transparent">
-              <CardHeader>
-                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit">
-                  <UserCheck className="h-8 w-8 text-primary" />
-                </div>
-                <CardTitle className="mt-4">3. Get Hired</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Track your application status and get ready to start your new life in a different country.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       {/* Featured Jobs Section */}
       <section className="w-full">
         <div className="container mx-auto px-4">
