@@ -7,16 +7,16 @@ import { revalidatePath } from 'next/cache';
 
 export interface FormState {
     message: string;
-    errors: Record<string, string[]> | undefined;
+    errors: Record<string, string[] | undefined> | undefined;
 }
 
-const urlSchema = z.string().url("Please enter a valid URL.");
+const urlOrEmptyStringSchema = z.string().url().or(z.literal(''));
 
 const settingsSchema = z.object({
-  heroImage1: urlSchema,
-  heroImage2: urlSchema,
-  heroImage3: urlSchema,
-  heroImage4: urlSchema,
+  heroImage1: urlOrEmptyStringSchema,
+  heroImage2: urlOrEmptyStringSchema,
+  heroImage3: urlOrEmptyStringSchema,
+  heroImage4: urlOrEmptyStringSchema,
 });
 
 export async function updateSettingsAction(prevState: FormState, formData: FormData): Promise<FormState> {
