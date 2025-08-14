@@ -9,18 +9,21 @@ let app: App;
 let auth: Auth;
 let db: Firestore;
 
+// This guard prevents re-initialization in a hot-reload environment.
 if (!admin.apps.length) {
+  const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
+  if (!serviceAccountString) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
+  }
+  
   try {
+    const serviceAccount = JSON.parse(serviceAccountString);
     app = admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
+      credential: admin.credential.cert(serviceAccount),
     });
   } catch (error: any) {
-    console.error('Firebase Admin SDK initialization error:', error.stack);
-    throw error;
+    console.error('Error parsing service account key or initializing Firebase Admin:', error);
+    throw new Error('Firebase Admin SDK initialization failed.');
   }
 } else {
   app = admin.app();
