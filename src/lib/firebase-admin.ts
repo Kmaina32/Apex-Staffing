@@ -14,8 +14,8 @@ if (!admin.apps.length) {
       credential: admin.credential.cert(serviceAccount),
       projectId: 'global-talent-bridge',
     });
-  } catch (error) {
-    console.error('Firebase Admin SDK initialization error:', error);
+  } catch (error: any) {
+    console.error('Firebase Admin SDK initialization error:', error.message);
   }
 }
 
