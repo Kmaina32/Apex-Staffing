@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Triangle, LogOut, User, LayoutDashboard, UserPlus, Settings } from 'lucide-react';
+import { Menu, Triangle, LogOut, User, LayoutDashboard, UserPlus, Settings, Shield } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import * as React from 'react';
@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { logout } from '@/lib/auth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { ADMIN_USER_IDS } from '@/lib/admin';
 
 
 export function Header() {
@@ -19,6 +20,8 @@ export function Header() {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const { user } = useAuth();
+
+  const isAdmin = user ? ADMIN_USER_IDS.includes(user.uid) : false;
 
   const handleLogout = async () => {
     await logout();
@@ -117,6 +120,11 @@ export function Header() {
                   <>
                     <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    {isAdmin && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin"><Shield className="mr-2 h-4 w-4" />Admin</Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild>
                       <Link href="/profile"><User className="mr-2 h-4 w-4" />Profile</Link>
                     </DropdownMenuItem>
