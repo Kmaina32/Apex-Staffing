@@ -2,26 +2,28 @@
 import * as admin from 'firebase-admin';
 import type { Job } from './types';
 
-
-if (!admin.apps.length) {
+function initializeFirebaseAdmin() {
   try {
     const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
     if (!serviceAccountString) {
       throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
     }
     const serviceAccount = JSON.parse(serviceAccountString);
-    admin.initializeApp({
+    return admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
       projectId: 'global-talent-bridge',
     });
   } catch (error: any) {
-    console.error('Firebase Admin SDK initialization error:', error.message);
+     if (!/already exists/u.test(error.message)) {
+      console.error('Firebase Admin SDK initialization error:', error.message);
+    }
   }
 }
 
+initializeFirebaseAdmin();
 
-const db = admin.apps.length ? admin.firestore() : null;
-const auth = admin.apps.length ? admin.auth() : null;
+const db = admin.firestore();
+const auth = admin.auth();
 
 export async function getUsers() {
   if (!auth) {
