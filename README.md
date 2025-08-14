@@ -24,10 +24,4 @@ To set up the project locally, follow these steps:
 
 1.  **Clone the repository:**
 
-2.  **Seed the database (Optional but Recommended):**
 
-    To populate your Firestore database with some initial job data, run the app and navigate to the `/api/seed-database` endpoint in your browser. This will add a few sample job listings to your `jobs` collection in Firestore.
-
-    Example: `http://localhost:3000/api/seed-database`
-
-```

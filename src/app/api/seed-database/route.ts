@@ -2,6 +2,8 @@
 import { NextResponse } from 'next/server';
 import { addJob } from '@/lib/firebase-admin';
 
+export const dynamic = 'force-dynamic';
+
 // Example jobs data to be added to Firestore:
 const exampleJobs = [
   {
