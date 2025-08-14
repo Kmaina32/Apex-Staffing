@@ -3,28 +3,22 @@ import * as admin from 'firebase-admin';
 import type { Job } from './types';
 
 
-const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
-let serviceAccount: admin.ServiceAccount | undefined;
-
-if (serviceAccountString) {
+if (!admin.apps.length) {
   try {
-    serviceAccount = JSON.parse(serviceAccountString);
-  } catch (e) {
-    console.error('Error parsing FIREBASE_SERVICE_ACCOUNT JSON:', e);
+    const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (!serviceAccountString) {
+      throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
+    }
+    const serviceAccount = JSON.parse(serviceAccountString);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      projectId: 'global-talent-bridge',
+    });
+  } catch (error) {
+    console.error('Firebase Admin SDK initialization error:', error);
   }
-} else {
-    console.warn('FIREBASE_SERVICE_ACCOUNT environment variable is not set. Admin features will be disabled.');
 }
 
-
-if (!admin.apps.length && serviceAccount) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    projectId: 'global-talent-bridge',
-  });
-} else if (!serviceAccount) {
-    console.warn('Firebase Admin SDK not initialized. Service Account credentials are not configured.');
-}
 
 const db = admin.apps.length ? admin.firestore() : null;
 const auth = admin.apps.length ? admin.auth() : null;
