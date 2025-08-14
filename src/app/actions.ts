@@ -3,8 +3,10 @@
 
 import { autoFillApplication, type AutoFillApplicationOutput } from '@/ai/flows/auto-fill-application';
 import { signUp } from '@/lib/auth';
-import { createUser } from '@/lib/firebase-admin';
+import { createUser, updateUser } from '@/lib/firebase-admin';
 import { z } from 'zod';
+import { auth } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
 
 
 export interface FormState {
@@ -14,6 +16,11 @@ export interface FormState {
 }
 
 export interface AuthFormState {
+    error?: string;
+    message?: string;
+}
+
+export interface UpdateProfileFormState {
     error?: string;
     message?: string;
 }
@@ -49,6 +56,39 @@ export async function signUpAction(prevState: AuthFormState, formData: FormData)
             return { error: 'This email address is already in use.' };
         }
         return { error: 'An unknown error occurred. Please try again.' };
+    }
+}
+
+const updateProfileSchema = z.object({
+    fullName: z.string().min(2, { message: 'Full name must be at least 2 characters.' }),
+});
+
+export async function updateProfileAction(prevState: UpdateProfileFormState, formData: FormData): Promise<UpdateProfileFormState> {
+    
+    if (!auth.currentUser) {
+        return { error: 'You must be logged in to update your profile.' };
+    }
+
+    const validatedFields = updateProfileSchema.safeParse({
+        fullName: formData.get('fullName'),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            error: validatedFields.error.flatten().fieldErrors.fullName?.[0],
+        };
+    }
+    
+    try {
+        await updateUser(auth.currentUser.uid, {
+            displayName: validatedFields.data.fullName,
+        });
+        revalidatePath('/profile');
+        revalidatePath('/dashboard');
+        return { message: 'Your profile has been updated successfully.' };
+    } catch(e) {
+        console.error(e);
+        return { error: 'An error occurred while updating your profile.' };
     }
 }
 

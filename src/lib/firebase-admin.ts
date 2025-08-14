@@ -70,3 +70,34 @@ export async function createUser(data: { uid: string; email: string; displayName
         throw new Error("Could not create user document in database.");
     }
 }
+
+
+export async function updateUser(uid: string, data: { displayName?: string; photoURL?: string }) {
+    if (!db || !auth) {
+        throw new Error('Firebase Admin SDK is not initialized.');
+    }
+    try {
+        // Update Firebase Auth
+        await auth.updateUser(uid, {
+            displayName: data.displayName,
+            photoURL: data.photoURL,
+        });
+
+        // Update Firestore user document
+        const userRef = db.collection('users').doc(uid);
+        const updateData: Record<string, any> = {};
+        if (data.displayName) {
+            updateData.displayName = data.displayName;
+        }
+         if (data.photoURL) {
+            updateData.photoURL = data.photoURL;
+        }
+
+        if (Object.keys(updateData).length > 0) {
+           await userRef.update(updateData);
+        }
+    } catch (error) {
+        console.error("Error updating user:", error);
+        throw new Error("Could not update user information.");
+    }
+}

@@ -3,7 +3,7 @@
 
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useActionState, useTransition } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -11,16 +11,38 @@ import { Loader2, UploadCloud } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
+import { updateProfileAction, type UpdateProfileFormState } from '@/app/actions';
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+
+  const initialState: UpdateProfileFormState = { message: "", error: undefined };
+  const [formState, formAction] = useActionState(updateProfileAction, initialState);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
+
+  useEffect(() => {
+    if (formState.message) {
+      toast({
+        title: 'Success!',
+        description: formState.message,
+      });
+    } else if (formState.error) {
+      toast({
+        title: 'An Error Occurred',
+        description: formState.error,
+        variant: 'destructive',
+      });
+    }
+  }, [formState, toast]);
 
   if (loading || !user) {
     return (
@@ -29,6 +51,14 @@ export default function ProfilePage() {
       </div>
     );
   }
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => {
+      formAction(formData);
+    });
+  };
 
   return (
     <div className="container mx-auto py-12 px-4 max-w-3xl">
@@ -55,7 +85,7 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent className="space-y-8">
             <Separator />
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
                  <div>
                     <h3 className="text-lg font-semibold">Personal Information</h3>
                     <p className="text-sm text-muted-foreground">Update your personal details here.</p>
@@ -63,7 +93,7 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                      <div className="space-y-2">
                         <Label htmlFor="fullName">Full Name</Label>
-                        <Input id="fullName" defaultValue={user.displayName || ''} />
+                        <Input id="fullName" name="fullName" defaultValue={user.displayName || ''} />
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="email">Email Address</Label>
@@ -95,11 +125,12 @@ export default function ProfilePage() {
                          <p className="text-xs text-muted-foreground">You can select multiple files.</p>
                     </div>
                 </div>
-                 <Button type="submit">Update Profile</Button>
+                 <Button type="submit" disabled={isPending}>
+                   {isPending ? <Loader2 className="animate-spin" /> : 'Update Profile'}
+                  </Button>
             </form>
         </CardContent>
       </Card>
     </div>
   );
 }
-
