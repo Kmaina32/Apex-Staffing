@@ -22,11 +22,11 @@ export async function GET() {
             jobIds: results,
         });
     } catch (error: any) {
-        console.error("Error generating and seeding jobs:", error);
+        console.error("Error in generate-and-seed-jobs route:", error);
         return NextResponse.json({ 
             success: false,
             message: "Error generating and seeding jobs.",
-            error: error.message 
+            error: error.message || 'An unknown server error occurred.'
         }, { status: 500 });
     }
 }
