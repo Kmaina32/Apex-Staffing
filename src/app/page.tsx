@@ -1,14 +1,45 @@
 
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Briefcase, FileText, UserCheck } from 'lucide-react';
+import { ArrowRight, Briefcase, FileText, UserCheck, Loader2 } from 'lucide-react';
 import { JobCard } from '@/components/job-card';
 import { getJobs } from '@/lib/firebase';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import type { Job } from '@/lib/types';
 
-export default async function Home() {
-  const allJobs = await getJobs();
-  const featuredJobs = allJobs.slice(0, 2);
+
+export default function Home() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const [featuredJobs, setFeaturedJobs] = useState<Job[]>([]);
+  const [jobsLoading, setJobsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        router.replace('/dashboard');
+      } else {
+        getJobs().then(allJobs => {
+          setFeaturedJobs(allJobs.slice(0, 2));
+          setJobsLoading(false);
+        });
+      }
+    }
+  }, [user, loading, router]);
+
+
+  if (loading || user) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col space-y-12 md:space-y-24 pb-12">
@@ -84,18 +115,26 @@ export default async function Home() {
         <div className="container mx-auto px-4">
             <div className="bg-card p-8 md:p-12 rounded-lg shadow-md">
                 <h2 className="text-3xl font-bold text-center mb-12 font-headline">Featured Job Openings</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {featuredJobs.map((job) => (
-                    <JobCard key={job.id} job={job} />
-                    ))}
-                </div>
-                <div className="text-center mt-12">
-                    <Button asChild variant="link" className="text-lg">
-                    <Link href="/jobs">
-                        View All Jobs <ArrowRight className="ml-2 h-5 w-w" />
-                    </Link>
-                    </Button>
-                </div>
+                {jobsLoading ? (
+                   <div className="flex justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                   </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {featuredJobs.map((job) => (
+                        <JobCard key={job.id} job={job} />
+                        ))}
+                    </div>
+                    <div className="text-center mt-12">
+                        <Button asChild variant="link" className="text-lg">
+                        <Link href="/jobs">
+                            View All Jobs <ArrowRight className="ml-2 h-5 w-w" />
+                        </Link>
+                        </Button>
+                    </div>
+                  </>
+                )}
             </div>
         </div>
       </section>
