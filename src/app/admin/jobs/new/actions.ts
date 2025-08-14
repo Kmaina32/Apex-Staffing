@@ -57,6 +57,7 @@ export async function createJobAction(prevState: FormState, formData: FormData):
         });
         
         revalidatePath('/admin/jobs');
+        revalidatePath('/jobs');
         
         return { message: 'success', errors: undefined };
 
