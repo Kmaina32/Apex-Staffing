@@ -3,6 +3,7 @@
 
 import { autoFillApplication, type AutoFillApplicationOutput } from '@/ai/flows/auto-fill-application';
 import { signUp } from '@/lib/auth';
+import { createUser } from '@/lib/firebase-admin';
 import { z } from 'zod';
 
 
@@ -36,7 +37,12 @@ export async function signUpAction(prevState: AuthFormState, formData: FormData)
     }
 
     try {
-        await signUp(validatedFields.data.email, validatedFields.data.password, validatedFields.data.fullName);
+        const userCredential = await signUp(validatedFields.data.email, validatedFields.data.password, validatedFields.data.fullName);
+        await createUser({
+            uid: userCredential.user.uid,
+            email: validatedFields.data.email,
+            displayName: validatedFields.data.fullName,
+        });
         return { message: "Registration successful! Please log in." };
     } catch (e: any) {
         if (e.code === 'auth/email-already-in-use') {

@@ -54,3 +54,19 @@ export async function addJob(job: Omit<Job, 'id'>) {
         throw new Error("Could not add job to database.");
     }
 }
+
+export async function createUser(data: { uid: string; email: string; displayName: string }) {
+    if (!db) {
+        throw new Error('Firebase Admin Firestore is not initialized.');
+    }
+    try {
+        await db.collection('users').doc(data.uid).set({
+            email: data.email,
+            displayName: data.displayName,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+    } catch (error) {
+        console.error("Error creating user document: ", error);
+        throw new Error("Could not create user document in database.");
+    }
+}
