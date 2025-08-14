@@ -6,6 +6,7 @@ import { Footer } from '@/components/footer';
 import { Toaster } from "@/components/ui/toaster";
 import { Inter, Poppins } from 'next/font/google';
 import { AuthProvider } from '@/hooks/use-auth';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -37,14 +38,21 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable}`}>
       <body className="font-body antialiased">
-        <AuthProvider>
-          <div className="relative flex min-h-dvh flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-          <Toaster />
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <div className="relative flex min-h-dvh flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+            <Toaster />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

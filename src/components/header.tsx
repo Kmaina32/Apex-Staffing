@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Triangle, LogOut, User, LayoutDashboard, UserPlus, Settings, Shield, Briefcase, Users } from 'lucide-react';
+import { Menu, Triangle, LogOut, User, LayoutDashboard, UserPlus, Settings, Shield, Briefcase, Users, Sun, Moon } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import * as React from 'react';
@@ -13,6 +13,7 @@ import { logout } from '@/lib/auth';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { ADMIN_USER_IDS } from '@/lib/admin';
+import { useTheme } from 'next-themes';
 
 
 export function Header() {
@@ -20,6 +21,7 @@ export function Header() {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const { user } = useAuth();
+  const { setTheme, theme } = useTheme();
 
   const isAdmin = user ? ADMIN_USER_IDS.includes(user.uid) : false;
   const onAdminPage = pathname.startsWith('/admin');
@@ -94,6 +96,12 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
+                <SheetHeader className="sr-only">
+                    <SheetTitle>Menu</SheetTitle>
+                    <SheetDescription>
+                    Navigation links for the application.
+                    </SheetDescription>
+                </SheetHeader>
                 <Link href="/" className="flex items-center space-x-2 mb-6" onClick={() => setOpen(false)}>
                     <Triangle className="h-6 w-6 text-primary" />
                     <span className="font-bold">Apex Staffing Group</span>
@@ -119,6 +127,15 @@ export function Header() {
         </div>
         
         <div className="flex flex-1 items-center justify-end space-x-2">
+          <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            >
+              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
           <nav className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

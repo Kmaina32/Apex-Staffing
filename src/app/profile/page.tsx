@@ -7,7 +7,7 @@ import { useEffect, useActionState, useTransition } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Loader2, UploadCloud } from 'lucide-react';
+import { Loader2, UploadCloud, ChevronLeft } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -62,9 +62,15 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto py-12 px-4 max-w-3xl">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold font-headline">My Profile</h1>
-        <p className="text-muted-foreground">Manage your personal information and documents.</p>
+      <header className="mb-8 flex items-center justify-between">
+        <div>
+            <h1 className="text-3xl font-bold font-headline">My Profile</h1>
+            <p className="text-muted-foreground">Manage your personal information and documents.</p>
+        </div>
+        <Button variant="outline" onClick={() => router.back()}>
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Back
+        </Button>
       </header>
       <Card>
         <CardHeader>
