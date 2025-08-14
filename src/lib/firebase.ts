@@ -20,7 +20,7 @@ const db = getFirestore(app);
 
 const jobsCollection = collection(db, 'jobs');
 const applicationsCollection = collection(db, 'applications');
-
+const settingsCollection = collection(db, 'settings');
 
 export async function getJobs(): Promise<Job[]> {
     const snapshot = await getDocs(jobsCollection);
@@ -45,6 +45,15 @@ export async function getApplicationsForUser(userId: string): Promise<Applicatio
 export async function getAllApplications(): Promise<Application[]> {
     const snapshot = await getDocs(applicationsCollection);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Application));
+}
+
+export async function getSettings(documentId: string): Promise<any | null> {
+    const docRef = doc(db, 'settings', documentId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return docSnap.data();
+    }
+    return null;
 }
 
 

@@ -7,26 +7,66 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { updateSettingsAction, type FormState } from './actions';
+import { getSettings } from "@/lib/firebase";
 
 export default function AdminSettingsPage() {
-  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+  const [settings, setSettings] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  // In a real app, you'd fetch these values from your database
-  const currentSettings = {
-    heroImage1: 'https://placehold.co/1920x1080.png',
-    heroImage2: 'https://placehold.co/1920x1080.png',
-    heroImage3: 'https://placehold.co/1920x1080.png',
-    heroImage4: 'https://placehold.co/1920x1080.png',
-  };
+  useEffect(() => {
+    getSettings('landingPage').then((data) => {
+      if (data) {
+        setSettings(data);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  const initialState: FormState = { message: "", errors: undefined };
+  const [formState, formAction] = useActionState(updateSettingsAction, initialState);
+
+  useEffect(() => {
+    if (formState.message === 'success') {
+      toast({
+        title: 'Settings Saved!',
+        description: 'The landing page settings have been updated.',
+      });
+    } else if (formState.message === 'error') {
+      toast({
+        title: 'An Error Occurred',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      });
+    } else if (formState.message === 'Validation failed. Please check the URLs.') {
+       toast({
+        title: 'Validation Failed',
+        description: 'Please ensure all URLs are valid before saving.',
+        variant: 'destructive',
+      });
+    }
+  }, [formState, toast]);
+
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSaving(true);
-    // Here you would call a server action to save the settings
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
-    setIsSaving(false);
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => {
+        formAction(formData);
+    });
   };
+
+  if (loading) {
+    return (
+       <div className="container mx-auto py-12 px-4 max-w-3xl flex justify-center">
+         <Loader2 className="h-8 w-8 animate-spin" />
+       </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-12 px-4 max-w-3xl">
@@ -48,19 +88,23 @@ export default function AdminSettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="heroImage1">Background Image 1 URL</Label>
-                <Input id="heroImage1" name="heroImage1" defaultValue={currentSettings.heroImage1} />
+                <Input id="heroImage1" name="heroImage1" defaultValue={settings?.heroImage1 || ''} />
+                {formState.errors?.heroImage1 && <p className="text-sm text-destructive">{formState.errors.heroImage1[0]}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="heroImage2">Background Image 2 URL</Label>
-                <Input id="heroImage2" name="heroImage2" defaultValue={currentSettings.heroImage2} />
+                <Input id="heroImage2" name="heroImage2" defaultValue={settings?.heroImage2 || ''} />
+                 {formState.errors?.heroImage2 && <p className="text-sm text-destructive">{formState.errors.heroImage2[0]}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="heroImage3">Background Image 3 URL</Label>
-                <Input id="heroImage3" name="heroImage3" defaultValue={currentSettings.heroImage3} />
+                <Input id="heroImage3" name="heroImage3" defaultValue={settings?.heroImage3 || ''} />
+                 {formState.errors?.heroImage3 && <p className="text-sm text-destructive">{formState.errors.heroImage3[0]}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="heroImage4">Background Image 4 URL</Label>
-                <Input id="heroImage4" name="heroImage4" defaultValue={currentSettings.heroImage4} />
+                <Input id="heroImage4" name="heroImage4" defaultValue={settings?.heroImage4 || ''} />
+                 {formState.errors?.heroImage4 && <p className="text-sm text-destructive">{formState.errors.heroImage4[0]}</p>}
               </div>
             </div>
             <Separator />
@@ -71,8 +115,8 @@ export default function AdminSettingsPage() {
                 <p>App-wide settings placeholder.</p>
               </div>
             </div>
-             <Button type="submit" disabled={isSaving}>
-                {isSaving ? <Loader2 className="animate-spin" /> : 'Save Settings'}
+             <Button type="submit" disabled={isPending}>
+                {isPending ? <Loader2 className="animate-spin" /> : 'Save Settings'}
               </Button>
           </CardContent>
         </Card>
@@ -80,3 +124,4 @@ export default function AdminSettingsPage() {
     </div>
   );
 }
+

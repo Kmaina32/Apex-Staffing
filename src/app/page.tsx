@@ -6,11 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Briefcase, FileText, UserCheck, Loader2 } from 'lucide-react';
 import { JobCard } from '@/components/job-card';
-import { getJobs } from '@/lib/firebase';
+import { getJobs, getSettings } from '@/lib/firebase';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { Job } from '@/lib/types';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
 
 export default function Home() {
@@ -18,6 +19,8 @@ export default function Home() {
   const router = useRouter();
   const [featuredJobs, setFeaturedJobs] = useState<Job[]>([]);
   const [jobsLoading, setJobsLoading] = useState(true);
+  const [heroImages, setHeroImages] = useState<string[]>([]);
+  const [settingsLoading, setSettingsLoading] = useState(true);
 
   useEffect(() => {
     if (!loading) {
@@ -28,12 +31,30 @@ export default function Home() {
           setFeaturedJobs(allJobs.slice(0, 2));
           setJobsLoading(false);
         });
+        getSettings('landingPage').then(settings => {
+          if (settings) {
+            setHeroImages([
+              settings.heroImage1 || 'https://placehold.co/1200x500.png',
+              settings.heroImage2 || 'https://placehold.co/1200x500.png',
+              settings.heroImage3 || 'https://placehold.co/1200x500.png',
+              settings.heroImage4 || 'https://placehold.co/1200x500.png',
+            ]);
+          } else {
+             setHeroImages([
+              'https://placehold.co/1200x500.png',
+              'https://placehold.co/1200x500.png',
+              'https://placehold.co/1200x500.png',
+              'https://placehold.co/1200x500.png',
+            ]);
+          }
+          setSettingsLoading(false);
+        })
       }
     }
   }, [user, loading, router]);
 
 
-  if (loading || user) {
+  if (loading || user || settingsLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -47,8 +68,8 @@ export default function Home() {
       <section className="w-full pt-16 md:pt-24">
         <div className="container mx-auto px-4">
            <div
-            className="relative bg-cover bg-center rounded-2xl p-8 md:p-16 text-center text-white overflow-hidden"
-            style={{backgroundImage: "url('https://placehold.co/1200x500.png')"}}
+            className="relative bg-cover bg-center rounded-2xl p-8 md:p-16 text-center text-white overflow-hidden min-h-[400px] md:min-h-[500px] flex flex-col justify-center"
+            style={{backgroundImage: `url(${heroImages[0]})`}}
             data-ai-hint="people working office"
           >
             <div className="absolute inset-0 bg-black/60"></div>

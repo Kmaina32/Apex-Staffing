@@ -147,3 +147,16 @@ export async function updateUser(uid: string, data: { displayName?: string; phot
         throw new Error("Could not update user information.");
     }
 }
+
+export async function updateSettings(documentId: string, settings: any) {
+    if (!db) {
+        throw new Error('Firebase Admin Firestore is not initialized.');
+    }
+    try {
+        const settingsRef = db.collection('settings').doc(documentId);
+        await settingsRef.set(settings, { merge: true });
+    } catch (error) {
+        console.error("Error updating settings: ", error);
+        throw new Error("Could not update settings in database.");
+    }
+}
