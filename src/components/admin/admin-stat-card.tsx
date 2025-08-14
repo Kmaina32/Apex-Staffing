@@ -23,4 +23,3 @@ export function AdminStatCard({ title, value, icon, description }: AdminStatCard
         </Card>
     );
 }
-
