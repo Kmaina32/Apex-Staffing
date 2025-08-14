@@ -12,29 +12,47 @@ let db: Firestore;
 if (!admin.apps.length) {
   const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
   if (!serviceAccountString) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
-  }
-  
-  try {
-    const serviceAccount = JSON.parse(serviceAccountString);
-    app = admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-  } catch (error: any) {
-    console.error('Error parsing service account key or initializing Firebase Admin:', error);
-    throw new Error('Firebase Admin SDK initialization failed.');
+    console.error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
+    // In a deployed environment, you would throw an error.
+    // For this prototype, we'll try to proceed gracefully but some features will fail.
+    // This prevents the entire app from crashing on startup.
+  } else {
+    try {
+      const serviceAccount = JSON.parse(serviceAccountString);
+      app = admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+      auth = admin.auth(app);
+      db = admin.firestore(app);
+    } catch (error: any) {
+      console.error('Error parsing service account key or initializing Firebase Admin:', error);
+      throw new Error('Firebase Admin SDK initialization failed.');
+    }
   }
 } else {
   app = admin.app();
+  auth = admin.auth(app);
+  db = admin.firestore(app);
 }
 
-auth = admin.auth(app);
-db = admin.firestore(app);
+// Functions that rely on db/auth should check if they are initialized
+async function ensureDb() {
+    if (!db) {
+        throw new Error("Firestore is not initialized. Check your FIREBASE_SERVICE_ACCOUNT environment variable.");
+    }
+    return db;
+}
 
-export { app, auth, db };
+async function ensureAuth() {
+    if (!auth) {
+        throw new Error("Firebase Auth is not initialized. Check your FIREBASE_SERVICE_ACCOUNT environment variable.");
+    }
+    return auth;
+}
 
 
 export async function getUsers(): Promise<admin.auth.UserInfo[]> {
+  const auth = await ensureAuth();
   try {
     const listUsersResult = await auth.listUsers();
     return listUsersResult.users.map(user => user.toJSON() as admin.auth.UserInfo);
@@ -45,6 +63,7 @@ export async function getUsers(): Promise<admin.auth.UserInfo[]> {
 }
 
 export async function getUsersCount(): Promise<number> {
+  const auth = await ensureAuth();
   try {
     const listUsersResult = await auth.listUsers();
     return listUsersResult.users.length;
@@ -55,6 +74,7 @@ export async function getUsersCount(): Promise<number> {
 }
 
 export async function getJobsCount(): Promise<number> {
+  const db = await ensureDb();
   try {
     const snapshot = await db.collection('jobs').get();
     return snapshot.size;
@@ -65,6 +85,7 @@ export async function getJobsCount(): Promise<number> {
 }
 
 export async function getApplicationsCount(): Promise<number> {
+  const db = await ensureDb();
   try {
     const snapshot = await db.collection('applications').get();
     return snapshot.size;
@@ -75,6 +96,7 @@ export async function getApplicationsCount(): Promise<number> {
 }
 
 export async function addJob(job: Omit<Job, 'id'>) {
+  const db = await ensureDb();
   try {
     const docRef = await db.collection('jobs').add(job);
     return docRef.id;
@@ -85,6 +107,7 @@ export async function addJob(job: Omit<Job, 'id'>) {
 }
 
 export async function createUser(data: { uid: string; email: string; displayName: string }) {
+  const db = await ensureDb();
   try {
     await db.collection('users').doc(data.uid).set({
       email: data.email,
@@ -98,6 +121,8 @@ export async function createUser(data: { uid: string; email: string; displayName
 }
 
 export async function updateUser(uid: string, data: { displayName?: string; photoURL?: string }) {
+    const auth = await ensureAuth();
+    const db = await ensureDb();
   try {
     // Update Firebase Auth
     await auth.updateUser(uid, {
@@ -125,6 +150,7 @@ export async function updateUser(uid: string, data: { displayName?: string; phot
 }
 
 export async function updateSettings(documentId: string, settings: any) {
+  const db = await ensureDb();
   try {
     const settingsRef = db.collection('settings').doc(documentId);
     await settingsRef.set(settings, { merge: true });
@@ -133,3 +159,5 @@ export async function updateSettings(documentId: string, settings: any) {
     throw new Error("Could not update settings in database.");
   }
 }
+
+export { db, auth, app };
