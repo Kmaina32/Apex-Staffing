@@ -1,5 +1,5 @@
-# Firebase Studio
+# Global Talent Bridge
 
-This is a NextJS starter in Firebase Studio.
+This is a Next.js application for Global Talent Bridge, a platform to connect workers with international job opportunities.
 
-To get started, take a look at src/app/page.tsx.
+To get started, take a look at `src/app/page.tsx`.
