@@ -19,7 +19,7 @@ export default function ContactPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <Mail className="h-5 w-5 text-primary" />
-                  <a href="mailto:support@globaltalentbridge.com" className="text-muted-foreground hover:text-primary">support@globaltalentbridge.com</a>
+                  <a href="mailto:support@apexstaffinggroup.com" className="text-muted-foreground hover:text-primary">support@apexstaffinggroup.com</a>
                 </div>
                 <div className="flex items-center gap-4">
                   <Phone className="h-5 w-5 text-primary" />
@@ -28,8 +28,8 @@ export default function ContactPage() {
                 <div className="flex items-start gap-4">
                   <MapPin className="h-5 w-5 text-primary mt-1" />
                   <span className="text-muted-foreground">
-                    123 International Ave, Suite 500<br/>
-                    Global City, World 12345
+                    123 Apex Tower, Suite 500<br/>
+                    Summit City, World 12345
                   </span>
                 </div>
               </div>

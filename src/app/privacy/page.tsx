@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
           
           <h2 className="text-xl font-semibold pt-4">1. Introduction</h2>
           <p className="text-muted-foreground">
-            Global Talent Bridge ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website.
+            Apex Staffing Group ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website.
           </p>
 
           <h2 className="text-xl font-semibold pt-4">2. Information We Collect</h2>
@@ -39,7 +39,7 @@ export default function PrivacyPolicyPage() {
           
           <h2 className="text-xl font-semibold pt-4">5. Contact Us</h2>
           <p className="text-muted-foreground">
-            If you have questions or comments about this Privacy Policy, please contact us at <a href="mailto:privacy@globaltalentbridge.com" className="text-primary hover:underline">privacy@globaltalentbridge.com</a>.
+            If you have questions or comments about this Privacy Policy, please contact us at <a href="mailto:privacy@apexstaffinggroup.com" className="text-primary hover:underline">privacy@apexstaffinggroup.com</a>.
           </p>
         </CardContent>
       </Card>

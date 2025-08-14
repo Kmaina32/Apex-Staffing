@@ -5,7 +5,7 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto py-12 px-4 max-w-5xl">
       <header className="mb-12 text-center">
-        <h1 className="text-4xl font-bold font-headline text-primary">About Global Talent Bridge</h1>
+        <h1 className="text-4xl font-bold font-headline text-primary">About Apex Staffing Group</h1>
         <p className="text-lg text-muted-foreground mt-2">Connecting global talent with worldwide opportunities.</p>
       </header>
 
@@ -15,7 +15,7 @@ export default function AboutPage() {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Global Talent Bridge was founded with a simple mission: to make international hiring and job searching a seamless and transparent process. We saw the challenges that both talented professionals and innovative companies faced in connecting across borders. Our platform was built to bridge that gap, leveraging technology to create opportunities and foster a global workforce. We believe that talent has no borders, and we are dedicated to helping people build their dream careers, anywhere in the world.
+            Apex Staffing Group was founded with a simple mission: to make international hiring and job searching a seamless and transparent process. We saw the challenges that both talented professionals and innovative companies faced in connecting across borders. Our platform was built to bridge that gap, leveraging technology to create opportunities and foster a global workforce. We believe that talent has no borders, and we are dedicated to helping people build their dream careers, anywhere in the world.
           </p>
         </CardContent>
       </Card>

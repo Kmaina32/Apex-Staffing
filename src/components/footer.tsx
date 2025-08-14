@@ -1,6 +1,6 @@
 
 import Link from "next/link";
-import { Globe } from "lucide-react";
+import { Triangle } from "lucide-react";
 
 export function Footer() {
   return (
@@ -9,8 +9,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
                  <Link href="/" className="mb-4 flex items-center space-x-2">
-                    <Globe className="h-6 w-6 text-primary" />
-                    <span className="font-bold text-lg">Global Talent Bridge</span>
+                    <Triangle className="h-6 w-6 text-primary" />
+                    <span className="font-bold text-lg">Apex Staffing Group</span>
                 </Link>
                 <p className="text-muted-foreground text-sm">Connecting global talent with worldwide opportunities.</p>
             </div>
@@ -29,7 +29,7 @@ export function Footer() {
             </div>
         </div>
         <div className="mt-8 border-t pt-6 text-center text-sm text-muted-foreground">
-             &copy; {new Date().getFullYear()} Global Talent Bridge. All rights reserved.
+             &copy; {new Date().getFullYear()} Apex Staffing Group. All rights reserved.
         </div>
       </div>
     </footer>

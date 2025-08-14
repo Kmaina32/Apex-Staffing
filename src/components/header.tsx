@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Globe } from 'lucide-react';
+import { Menu, Triangle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import * as React from 'react';
@@ -26,8 +26,8 @@ export function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Globe className="h-6 w-6 text-primary" />
-            <span className="hidden font-bold sm:inline-block">Global Talent Bridge</span>
+            <Triangle className="h-6 w-6 text-primary" />
+            <span className="hidden font-bold sm:inline-block">Apex Staffing Group</span>
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             {navLinks.map((link) => (
@@ -56,8 +56,8 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="left">
                 <Link href="/" className="flex items-center space-x-2 mb-6" onClick={() => setOpen(false)}>
-                    <Globe className="h-6 w-6 text-primary" />
-                    <span className="font-bold">Global Talent Bridge</span>
+                    <Triangle className="h-6 w-6 text-primary" />
+                    <span className="font-bold">Apex Staffing Group</span>
                 </Link>
                 <div className="flex flex-col gap-4">
                 {navLinks.map((link) => (

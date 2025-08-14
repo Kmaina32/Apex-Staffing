@@ -19,8 +19,8 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Global Talent Bridge',
-    template: '%s | Global Talent Bridge',
+    default: 'Apex Staffing Group',
+    template: '%s | Apex Staffing Group',
   },
   description: 'Find Jobs Abroad – Work Anywhere in the World',
   icons: {

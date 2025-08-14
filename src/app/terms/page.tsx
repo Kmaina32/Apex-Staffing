@@ -12,7 +12,7 @@ export default function TermsOfServicePage() {
 
           <h2 className="text-xl font-semibold pt-4">1. Agreement to Terms</h2>
           <p className="text-muted-foreground">
-            By using the Global Talent Bridge website and services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
+            By using the Apex Staffing Group website and services, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.
           </p>
 
           <h2 className="text-xl font-semibold pt-4">2. Use of Services</h2>
@@ -22,7 +22,7 @@ export default function TermsOfServicePage() {
 
           <h2 className="text-xl font-semibold pt-4">3. Intellectual Property</h2>
           <p className="text-muted-foreground">
-            All content and materials available on our website, including but not limited to text, graphics, website name, code, images, and logos, are the intellectual property of Global Talent Bridge and are protected by applicable copyright and trademark law.
+            All content and materials available on our website, including but not limited to text, graphics, website name, code, images, and logos, are the intellectual property of Apex Staffing Group and are protected by applicable copyright and trademark law.
           </p>
 
           <h2 className="text-xl font-semibold pt-4">4. Termination</h2>
@@ -37,7 +37,7 @@ export default function TermsOfServicePage() {
 
           <h2 className="text-xl font-semibold pt-4">6. Contact Us</h2>
           <p className="text-muted-foreground">
-            If you have any questions about these Terms of Service, please contact us at <a href="mailto:legal@globaltalentbridge.com" className="text-primary hover:underline">legal@globaltalentbridge.com</a>.
+            If you have any questions about these Terms of Service, please contact us at <a href="mailto:legal@apexstaffinggroup.com" className="text-primary hover:underline">legal@apexstaffinggroup.com</a>.
           </p>
         </CardContent>
       </Card>
