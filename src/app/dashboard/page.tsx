@@ -9,6 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { User } from 'lucide-react';
 
 function getStatusBadgeVariant(status: Application['status']) {
   switch (status) {
@@ -50,9 +53,17 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold font-headline">My Dashboard</h1>
-        <p className="text-muted-foreground">Track your job applications and manage your profile.</p>
+      <header className="mb-8 flex items-center justify-between">
+        <div>
+            <h1 className="text-3xl font-bold font-headline">My Dashboard</h1>
+            <p className="text-muted-foreground">Track your job applications and manage your profile.</p>
+        </div>
+        <Button asChild variant="outline">
+            <Link href="/profile">
+                <User className="mr-2 h-4 w-4" />
+                Manage Profile
+            </Link>
+        </Button>
       </header>
 
       <Card>
