@@ -33,7 +33,7 @@ export default function Home() {
           setJobsLoading(false);
         });
         getSettings('landingPage').then(settings => {
-          if (settings) {
+          if (settings && (settings.heroImage1 || settings.heroImage2 || settings.heroImage3 || settings.heroImage4)) {
             setHeroImages([
               settings.heroImage1,
               settings.heroImage2,
@@ -41,7 +41,7 @@ export default function Home() {
               settings.heroImage4,
             ].filter(Boolean));
           } else {
-             setHeroImages([]);
+             setHeroImages(['https://www.allegiancestaffing.com/wp-content/uploads/2023/05/Why-Do-Companies-Hire-Through-Staffing-Agencies__524381282_Blogs-1.png.webp']);
           }
           setSettingsLoading(false);
         })

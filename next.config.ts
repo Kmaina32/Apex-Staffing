@@ -17,6 +17,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'www.allegiancestaffing.com',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
 };
