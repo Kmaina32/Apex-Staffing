@@ -36,7 +36,7 @@ export async function signUpAction(prevState: AuthFormState, formData: FormData)
     }
 
     try {
-        await signUp(validatedFields.data.email, validatedFields.data.password);
+        await signUp(validatedFields.data.email, validatedFields.data.password, validatedFields.data.fullName);
         return { message: "Registration successful! Please log in." };
     } catch (e: any) {
         if (e.code === 'auth/email-already-in-use') {
