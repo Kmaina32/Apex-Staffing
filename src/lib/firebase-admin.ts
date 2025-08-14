@@ -5,17 +5,27 @@ import type { Auth } from 'firebase-admin/auth';
 import type { Firestore } from 'firebase-admin/firestore';
 import type { Job } from './types';
 
-// This is a singleton pattern to ensure we only initialize Firebase Admin once.
-let app: App;
-let auth: Auth;
-let db: Firestore;
+interface FirebaseAdminInstances {
+  app: App;
+  auth: Auth;
+  db: Firestore;
+}
 
-function initializeFirebaseAdmin() {
+let instances: FirebaseAdminInstances | null = null;
+
+function getAdminInstances(): FirebaseAdminInstances {
+  if (instances) {
+    return instances;
+  }
+
   if (admin.apps.length > 0) {
-    app = admin.app();
-    auth = admin.auth(app);
-    db = admin.firestore(app);
-    return;
+    const app = admin.app();
+    instances = {
+      app,
+      auth: admin.auth(app),
+      db: admin.firestore(app),
+    };
+    return instances;
   }
 
   const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
@@ -25,26 +35,25 @@ function initializeFirebaseAdmin() {
 
   try {
     const serviceAccount = JSON.parse(serviceAccountString);
-    app = admin.initializeApp({
+    const app = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
-    auth = admin.auth(app);
-    db = admin.firestore(app);
+    instances = {
+      app,
+      auth: admin.auth(app),
+      db: admin.firestore(app),
+    };
+    return instances;
   } catch (error: any) {
      console.error('Error parsing service account key or initializing Firebase Admin:', error);
      throw new Error('Firebase Admin SDK initialization failed: ' + error.message);
   }
-};
-
-// Initialize on module load
-initializeFirebaseAdmin();
-
-export { app, auth, db };
-
+}
 
 // Functions that use the admin SDK
 export async function getUsers(): Promise<admin.auth.UserInfo[]> {
   try {
+    const { auth } = getAdminInstances();
     const listUsersResult = await auth.listUsers();
     return listUsersResult.users.map(user => user.toJSON() as admin.auth.UserInfo);
   } catch (error) {
@@ -55,6 +64,7 @@ export async function getUsers(): Promise<admin.auth.UserInfo[]> {
 
 export async function getUsersCount(): Promise<number> {
   try {
+    const { auth } = getAdminInstances();
     const listUsersResult = await auth.listUsers();
     return listUsersResult.users.length;
   } catch (error) {
@@ -65,6 +75,7 @@ export async function getUsersCount(): Promise<number> {
 
 export async function getJobsCount(): Promise<number> {
   try {
+    const { db } = getAdminInstances();
     const snapshot = await db.collection('jobs').get();
     return snapshot.size;
   } catch (error) {
@@ -75,6 +86,7 @@ export async function getJobsCount(): Promise<number> {
 
 export async function getApplicationsCount(): Promise<number> {
   try {
+    const { db } = getAdminInstances();
     const snapshot = await db.collection('applications').get();
     return snapshot.size;
   } catch (error) {
@@ -85,6 +97,7 @@ export async function getApplicationsCount(): Promise<number> {
 
 export async function addJob(job: Omit<Job, 'id'>) {
   try {
+    const { db } = getAdminInstances();
     const docRef = await db.collection('jobs').add(job);
     return docRef.id;
   } catch(error) {
@@ -95,6 +108,7 @@ export async function addJob(job: Omit<Job, 'id'>) {
 
 export async function createUser(data: { uid: string; email: string; displayName: string }) {
   try {
+    const { db } = getAdminInstances();
     await db.collection('users').doc(data.uid).set({
       email: data.email,
       displayName: data.displayName,
@@ -108,6 +122,7 @@ export async function createUser(data: { uid: string; email: string; displayName
 
 export async function updateUser(uid: string, data: { displayName?: string; photoURL?: string }) {
   try {
+    const { auth, db } = getAdminInstances();
     // Update Firebase Auth
     await auth.updateUser(uid, {
       displayName: data.displayName,
@@ -135,6 +150,7 @@ export async function updateUser(uid: string, data: { displayName?: string; phot
 
 export async function updateSettings(documentId: string, settings: any) {
   try {
+    const { db } = getAdminInstances();
     const settingsRef = db.collection('settings').doc(documentId);
     await settingsRef.set(settings, { merge: true });
   } catch (error) {
