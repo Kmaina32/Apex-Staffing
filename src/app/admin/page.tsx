@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Loader2, ShieldCheck, Briefcase, Users, FileText } from 'lucide-react';
 import { ADMIN_USER_IDS } from '@/lib/admin';
 import { AdminStatCard } from '@/components/admin/admin-stat-card';
-import { getJobs, getAllApplications } from '@/lib/firebase';
 
 
 export default function AdminPage() {
@@ -33,26 +32,14 @@ export default function AdminPage() {
         if (isAdmin) {
             setLoadingData(true);
             try {
-              const jobsPromise = getJobs();
-              const applicationsPromise = getAllApplications();
-              const usersPromise = fetch('/api/get-users');
-              
-              const [jobs, applications, usersResponse] = await Promise.all([
-                  jobsPromise,
-                  applicationsPromise,
-                  usersPromise
-              ]);
-
-              setTotalJobs(jobs.length);
-              setTotalApplications(applications.length);
-
-              if (usersResponse.ok) {
-                  const users = await usersResponse.json();
-                  setTotalCandidates(users.length);
-              } else {
-                  setTotalCandidates(0);
+              const response = await fetch('/api/get-admin-stats');
+              if (!response.ok) {
+                throw new Error('Failed to fetch admin stats');
               }
-
+              const data = await response.json();
+              setTotalJobs(data.totalJobs);
+              setTotalCandidates(data.totalCandidates);
+              setTotalApplications(data.totalApplications);
             } catch (error) {
               console.error("Failed to fetch admin data:", error);
               setTotalJobs(0);
