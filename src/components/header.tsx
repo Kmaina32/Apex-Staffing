@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Triangle, LogOut, User, LayoutDashboard, UserPlus } from 'lucide-react';
+import { Menu, Triangle, LogOut, User, LayoutDashboard, UserPlus, FileText, Briefcase } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import * as React from 'react';
@@ -24,17 +24,20 @@ export function Header() {
     await logout();
     router.push('/');
   };
-
-  const navLinks = [
+  
+  const baseNavLinks = [
     { href: '/', label: 'Home' },
     { href: '/jobs', label: 'Find a Job' },
-    { href: '/about', label: 'About Us' },
-    { href: '/contact', label: 'Contact' },
   ];
 
-  if (user) {
-    navLinks.push({ href: '/dashboard', label: 'My Dashboard' });
-  }
+  const loggedInNavLinks = [
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/jobs', label: 'Find Job' },
+    { href: '/applications', label: 'Applications' },
+  ];
+
+  const navLinks = user ? loggedInNavLinks : baseNavLinks;
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -116,6 +119,9 @@ export function Header() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                       <Link href="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />My Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/applications"><FileText className="mr-2 h-4 w-4" />My Applications</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout}>
