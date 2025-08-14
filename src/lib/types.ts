@@ -15,6 +15,7 @@ export type Job = {
 
 export type Application = {
   id: string;
+  userId: string;
   jobId: string;
   jobTitle: string;
   company: string;

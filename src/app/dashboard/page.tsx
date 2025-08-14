@@ -1,5 +1,5 @@
 
-import { applications } from '@/lib/data';
+import { getApplicationsForUser } from '@/lib/firebase';
 import type { Application } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +26,11 @@ function getStatusBadgeVariant(status: Application['status']) {
   }
 }
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  // NOTE: Using a hardcoded user ID for now.
+  // In a real application, you would get this from your authentication system.
+  const applications = await getApplicationsForUser('user123');
+
   return (
     <div className="container mx-auto py-8 px-4">
       <header className="mb-8">

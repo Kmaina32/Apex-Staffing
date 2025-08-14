@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, Briefcase, FileText, UserCheck } from 'lucide-react';
 import { JobCard } from '@/components/job-card';
-import { jobs } from '@/lib/data';
+import { getJobs } from '@/lib/firebase';
 
-export default function Home() {
-  const featuredJobs = jobs.slice(0, 2);
+export default async function Home() {
+  const allJobs = await getJobs();
+  const featuredJobs = allJobs.slice(0, 2);
 
   return (
     <div className="flex flex-col space-y-12 md:space-y-24 pb-12">
@@ -91,7 +92,7 @@ export default function Home() {
                 <div className="text-center mt-12">
                     <Button asChild variant="link" className="text-lg text-primary">
                     <Link href="/jobs">
-                        View All Jobs <ArrowRight className="ml-2 h-5 w-5" />
+                        View All Jobs <ArrowRight className="ml-2 h-5 w-w" />
                     </Link>
                     </Button>
                 </div>

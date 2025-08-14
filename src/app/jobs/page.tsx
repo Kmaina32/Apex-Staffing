@@ -1,13 +1,14 @@
 
 import { JobCard } from '@/components/job-card';
-import { jobs } from '@/lib/data';
+import { getJobs } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
-export default function JobsPage() {
+export default async function JobsPage() {
+  const jobs = await getJobs();
   const uniqueCountries = [...new Set(jobs.map(job => job.country))];
   const uniqueSectors = ["Healthcare", "Tech", "Construction", "Hospitality"];
 
