@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 import type { Job } from './types';
 
 // The FIREBASE_SERVICE_ACCOUNT environment variable is expected to be loaded
-// by the application's entry point (e.g., using dotenv).
+// by the application's entry point (e.g., using dotenv in next.config.js).
 
 const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
 let serviceAccount: admin.ServiceAccount | undefined;
