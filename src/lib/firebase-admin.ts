@@ -1,53 +1,75 @@
-
 import admin from 'firebase-admin';
 import type { App } from 'firebase-admin/app';
 import type { Auth } from 'firebase-admin/auth';
 import type { Firestore } from 'firebase-admin/firestore';
 import type { Job } from './types';
 
-let app: App;
-let auth: Auth;
-let db: Firestore;
+interface FirebaseAdminInstances {
+  app: App;
+  auth: Auth;
+  db: Firestore;
+}
 
-if (!admin.apps.length) {
+let adminInstances: FirebaseAdminInstances | null = null;
+
+function initializeFirebaseAdmin(): FirebaseAdminInstances {
+  if (adminInstances) {
+    return adminInstances;
+  }
+
+  if (admin.apps.length > 0) {
+    const app = admin.app();
+    adminInstances = {
+      app,
+      auth: admin.auth(app),
+      db: admin.firestore(app),
+    };
+    return adminInstances;
+  }
+
   const serviceAccountString = process.env.FIREBASE_SERVICE_ACCOUNT;
   if (!serviceAccountString) {
-    console.error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
-    // In a deployed environment, you would throw an error.
-    // For this prototype, we'll try to proceed gracefully but some features will fail.
-    // This prevents the entire app from crashing on startup.
-  } else {
-    try {
-      const serviceAccount = JSON.parse(serviceAccountString);
-      app = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-      });
-      auth = admin.auth(app);
-      db = admin.firestore(app);
-    } catch (error: any) {
-      console.error('Error parsing service account key or initializing Firebase Admin:', error);
-      throw new Error('Firebase Admin SDK initialization failed.');
-    }
+    throw new Error('FIREBASE_SERVICE_ACCOUNT environment variable is not set.');
   }
-} else {
-  app = admin.app();
-  auth = admin.auth(app);
-  db = admin.firestore(app);
+
+  try {
+    const serviceAccount = JSON.parse(serviceAccountString);
+    const app = admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+    
+    adminInstances = {
+      app,
+      auth: admin.auth(app),
+      db: admin.firestore(app),
+    };
+    
+    return adminInstances;
+  } catch (error: any) {
+    console.error('Error parsing service account key or initializing Firebase Admin:', error);
+    throw new Error('Firebase Admin SDK initialization failed: ' + error.message);
+  }
 }
+
+function getAdminInstances(): FirebaseAdminInstances {
+    if (!adminInstances) {
+        initializeFirebaseAdmin();
+    }
+    return adminInstances!;
+}
+
+export const app: App = getAdminInstances().app;
+export const auth: Auth = getAdminInstances().auth;
+export const db: Firestore = getAdminInstances().db;
+
 
 // Functions that rely on db/auth should check if they are initialized
 async function ensureDb() {
-    if (!db) {
-        throw new Error("Firestore is not initialized. Check your FIREBASE_SERVICE_ACCOUNT environment variable.");
-    }
-    return db;
+    return getAdminInstances().db;
 }
 
 async function ensureAuth() {
-    if (!auth) {
-        throw new Error("Firebase Auth is not initialized. Check your FIREBASE_SERVICE_ACCOUNT environment variable.");
-    }
-    return auth;
+    return getAdminInstances().auth;
 }
 
 
@@ -159,5 +181,3 @@ export async function updateSettings(documentId: string, settings: any) {
     throw new Error("Could not update settings in database.");
   }
 }
-
-export { db, auth, app };
